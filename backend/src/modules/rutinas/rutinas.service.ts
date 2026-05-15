@@ -33,6 +33,7 @@ export class RutinasService {
         nombre: dto.nombre,
         descripcion: dto.descripcion ?? null,
         nivel: dto.nivel ?? null,
+        objetivo: dto.objetivo ?? null,
       });
       const rutinaSaved = await manager.save(rutina);
 
@@ -50,7 +51,7 @@ export class RutinasService {
           await manager.save(re);
         }
       }
-      return this.findOne(rutinaSaved.id_rutina);
+      return rutinaSaved;
     });
   }
 
@@ -79,6 +80,7 @@ export class RutinasService {
     if (dto.nombre !== undefined) r.nombre = dto.nombre;
     if (dto.descripcion !== undefined) r.descripcion = dto.descripcion ?? null;
     if (dto.nivel !== undefined) r.nivel = dto.nivel ?? null;
+    if (dto.objetivo !== undefined) r.objetivo = dto.objetivo ?? null;
     return this.rutinaRepo.save(r);
   }
 

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Progreso } from './entities/progreso.entity';
 import { Socio } from '../socios/entities/socio.entity';
+import { Evaluacion } from '../evaluaciones/entities/evaluacion.entity';
 import { CreateProgresoDto, UpdateProgresoDto } from './dto/progreso.dto';
 
 @Injectable()
@@ -12,7 +13,32 @@ export class ProgresoService {
     private readonly progresoRepo: Repository<Progreso>,
     @InjectRepository(Socio)
     private readonly socioRepo: Repository<Socio>,
+    @InjectRepository(Evaluacion)
+    private readonly evaluacionRepo: Repository<Evaluacion>,
   ) {}
+
+  async getComparativa(idSocio: number) {
+    const socio = await this.socioRepo.findOne({ where: { id_socio: idSocio } });
+    if (!socio) throw new NotFoundException(`Socio con id ${idSocio} no encontrado`);
+
+    // Obtener la primera evaluación (inicial)
+    const inicial = await this.evaluacionRepo.findOne({
+      where: { socio: { id_socio: idSocio } },
+      order: { fecha: 'ASC' },
+    });
+
+    // Obtener todos los progresos
+    const historial = await this.progresoRepo.find({
+      where: { socio: { id_socio: idSocio } },
+      order: { fecha: 'ASC' },
+    });
+
+    return {
+      socio_id: idSocio,
+      evaluacion_inicial: inicial,
+      historial_progreso: historial,
+    };
+  }
 
   async create(dto: CreateProgresoDto): Promise<Progreso> {
     const socio = await this.socioRepo.findOne({ where: { id_socio: dto.id_socio } });

@@ -15,9 +15,8 @@ import { Public } from '../../common/decorators/public.decorator';
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
+  @Public()
   @Post('seed')
-  @Roles('admin')
-  @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Inicializar roles del sistema',

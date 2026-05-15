@@ -112,4 +112,11 @@ export class SociosService {
     socio.activo = false;
     await this.socioRepo.save(socio);
   }
+
+  async findByUsuario(idUsuario: number): Promise<Socio | null> {
+    return this.socioRepo.findOne({
+      where: { usuario: { id_usuario: idUsuario } },
+      relations: ['usuario', 'usuario.rol', 'membresias', 'membresias.plan'],
+    });
+  }
 }

@@ -24,6 +24,11 @@ export class CreateRutinaDto {
   @MaxLength(50)
   nivel?: string;
 
+  @IsOptional({ message: 'El objetivo es opcional' })
+  @IsString()
+  @MaxLength(100)
+  objetivo?: string;
+
   @IsOptional({ message: 'Los ejercicios son opcionales' })
   @IsArray()
   @ValidateNested({ each: true })

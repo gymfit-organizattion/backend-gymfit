@@ -35,6 +35,12 @@ export class Rutina {
   @MaxLength(50)
   nivel!: string | null;
 
+  @Column({ name: 'objetivo', type: 'varchar', length: 100, nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  objetivo!: string | null;
+
   
   @OneToMany(() => RutinaEjercicio, (re) => re.rutina, { cascade: true })
   rutina_ejercicios!: RutinaEjercicio[];

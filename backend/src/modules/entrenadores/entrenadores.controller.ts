@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@ne
 import { EntrenadoresService } from './entrenadores.service';
 import { CreateEntrenadorDto } from './dto/entrenador.dto';
 import { UpdateEntrenadorDto } from './dto/update-entrenador.dto';
-import { CreateAsignacionDto } from './dto/asignacion.dto';
+import { CreateAsignacionDto, BulkAsignacionDto } from './dto/asignacion.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('Entrenadores')
@@ -51,6 +51,12 @@ export class EntrenadoresController {
   @ApiOperation({ summary: 'Asignar entrenador a socio', description: 'Crea la relación entrenador ↔ socio.' })
   @ApiResponse({ status: 201, description: 'Asignación creada' })
   asignar(@Body() dto: CreateAsignacionDto) { return this.entrenadoresService.asignar(dto); }
+
+  @Post('asignaciones/masiva')
+  @Roles('admin')
+  @ApiOperation({ summary: 'Asignación masiva de entrenador a múltiples socios (HU-08)' })
+  @ApiResponse({ status: 201, description: 'Asignaciones creadas' })
+  asignacionMasiva(@Body() dto: BulkAsignacionDto) { return this.entrenadoresService.asignarMasivo(dto); }
 
   @Get(':id/asignaciones')
   @Roles('admin', 'entrenador')

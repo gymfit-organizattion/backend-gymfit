@@ -41,6 +41,15 @@ export class ProgresoController {
   @ApiResponse({ status: 200, description: 'Historial de progreso del socio' })
   findBySocio(@Param('idSocio', ParseIntPipe) idSocio: number) { return this.progresoService.findBySocio(idSocio); }
 
+  @Get('socio/:idSocio/comparativa')
+  @Roles('admin', 'entrenador', 'socio')
+  @ApiOperation({ summary: 'Historial comparativo con evaluación inicial (HU-10)' })
+  @ApiParam({ name: 'idSocio', type: Number })
+  @ApiResponse({ status: 200, description: 'Datos comparativos para gráficas' })
+  getComparativa(@Param('idSocio', ParseIntPipe) idSocio: number) { 
+    return this.progresoService.getComparativa(idSocio); 
+  }
+
   @Put(':id')
   @Roles('admin', 'entrenador')
   @ApiOperation({ summary: 'Actualizar registro de progreso' })

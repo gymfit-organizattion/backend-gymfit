@@ -21,8 +21,14 @@ export class RolesGuard implements CanActivate {
     if (!rolesRequeridos || rolesRequeridos.length === 0) return true;
 
     const { user } = context.switchToHttp().getRequest();
-    const rolUsuario: string = user?.rol?.nombre ?? '';
+    const rolUsuario: string = (user?.rol?.nombre ?? '').toLowerCase();
+    const rolesRequeridosLower = rolesRequeridos.map(r => r.toLowerCase());
 
-    return rolesRequeridos.includes(rolUsuario);
+    console.log(`[RolesGuard] Endpoint: ${context.getHandler().name}`);
+    console.log(`[RolesGuard] Requeridos: ${rolesRequeridosLower}`);
+    console.log(`[RolesGuard] Usuario Rol: ${rolUsuario}`);
+    console.log(`[RolesGuard] User ID: ${user?.id_usuario}`);
+
+    return rolesRequeridosLower.includes(rolUsuario);
   }
 }

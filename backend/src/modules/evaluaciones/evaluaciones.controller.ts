@@ -3,6 +3,8 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@ne
 import { EvaluacionesService } from './evaluaciones.service';
 import { CreateEvaluacionDto, UpdateEvaluacionDto } from './dto/evaluacion.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { UsuarioActual } from '../../common/decorators/usuario-actual.decorator';
+import { Usuario } from '../usuarios/entities/usuario.entity';
 
 @ApiTags('Evaluaciones')
 @ApiBearerAuth('JWT-auth')
@@ -14,7 +16,12 @@ export class EvaluacionesController {
   @Roles('admin', 'entrenador')
   @ApiOperation({ summary: 'Registrar evaluación física (HU-13)', description: 'Crea una evaluación física para un socio con métricas como peso, talla, IMC, etc.' })
   @ApiResponse({ status: 201, description: 'Evaluación registrada' })
-  create(@Body() dto: CreateEvaluacionDto) { return this.evaluacionesService.create(dto); }
+  create(
+    @Body() dto: CreateEvaluacionDto,
+    @UsuarioActual() user: Usuario,
+  ) { 
+    return this.evaluacionesService.create(dto, user.id_usuario, user.rol.nombre === 'admin'); 
+  }
 
   @Get()
   @Roles('admin', 'entrenador')
@@ -41,7 +48,13 @@ export class EvaluacionesController {
   @ApiOperation({ summary: 'Actualizar evaluación' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Evaluación actualizada' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateEvaluacionDto) { return this.evaluacionesService.update(id, dto); }
+  update(
+    @Param('id', ParseIntPipe) id: number, 
+    @Body() dto: UpdateEvaluacionDto,
+    @UsuarioActual() user: Usuario,
+  ) { 
+    return this.evaluacionesService.update(id, dto, user.id_usuario, user.rol.nombre === 'admin'); 
+  }
 
   @Delete(':id')
   @Roles('admin')

@@ -7,7 +7,7 @@ import { Usuario } from '../usuarios/entities/usuario.entity';
 import { Socio } from '../socios/entities/socio.entity';
 import { CreateEntrenadorDto } from './dto/entrenador.dto';
 import { UpdateEntrenadorDto } from './dto/update-entrenador.dto';
-import { CreateAsignacionDto } from './dto/asignacion.dto';
+import { CreateAsignacionDto, BulkAsignacionDto } from './dto/asignacion.dto';
 
 @Injectable()
 export class EntrenadoresService {
@@ -84,6 +84,27 @@ export class EntrenadoresService {
       fecha_asignacion: dto.fecha_asignacion,
     });
     return this.asignacionRepo.save(asignacion);
+  }
+
+  async asignarMasivo(dto: BulkAsignacionDto): Promise<Asignacion[]> {
+    const entrenador = await this.entrenadorRepo.findOne({ where: { id_entrenador: dto.id_entrenador } });
+    if (!entrenador) throw new NotFoundException(`Entrenador con id ${dto.id_entrenador} no encontrado`);
+
+    const asignaciones: Asignacion[] = [];
+
+    for (const idSocio of dto.id_socios) {
+      const socio = await this.socioRepo.findOne({ where: { id_socio: idSocio } });
+      if (!socio) continue; // O lanzar error según preferencia
+
+      const asignacion = this.asignacionRepo.create({
+        entrenador,
+        socio,
+        fecha_asignacion: dto.fecha_asignacion,
+      });
+      asignaciones.push(asignacion);
+    }
+
+    return this.asignacionRepo.save(asignaciones);
   }
 
   findAsignacionesByEntrenador(id: number): Promise<Asignacion[]> {
