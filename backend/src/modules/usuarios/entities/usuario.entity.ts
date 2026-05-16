@@ -30,6 +30,12 @@ export class Usuario {
   @Column({ name: 'estado', type: 'boolean', default: true })
   estado!: boolean;
 
+  @Column({ name: 'intentos_fallidos', type: 'int', default: 0 })
+  intentos_fallidos!: number;
+
+  @Column({ name: 'bloqueado_hasta', type: 'timestamp', nullable: true })
+  bloqueado_hasta!: Date | null;
+
   //  Relaciones 
   @ManyToOne(() => Rol, (rol) => rol.usuarios, { eager: true, nullable: false })
   @JoinColumn({ name: 'id_rol' })

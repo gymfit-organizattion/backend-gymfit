@@ -24,9 +24,11 @@ import { AsistenciasModule }   from './modules/asistencias/asistencias.module';
 import { AlertasStockModule }  from './modules/alertas-stock/alertas-stock.module';
 import { NotificacionesModule } from './modules/notificaciones/notificaciones.module';
 import { ReportesModule }      from './modules/reportes/reportes.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
 
     ConfigModule.forRoot({
       isGlobal: true,

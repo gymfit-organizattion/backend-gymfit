@@ -68,8 +68,26 @@ export class AuthService {
     if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
     if (!usuario.estado) throw new UnauthorizedException('El usuario está inactivo');
 
+    if (usuario.bloqueado_hasta && usuario.bloqueado_hasta > new Date()) {
+      throw new UnauthorizedException('Cuenta bloqueada temporalmente por múltiples intentos fallidos. Intente más tarde.');
+    }
+
     const passwordValida = await bcrypt.compare(dto.password, usuario.password);
-    if (!passwordValida) throw new UnauthorizedException('Credenciales incorrectas');
+    if (!passwordValida) {
+      usuario.intentos_fallidos += 1;
+      if (usuario.intentos_fallidos >= 3) {
+        usuario.bloqueado_hasta = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos
+      }
+      await this.usuariosRepo.save(usuario);
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
+
+    // Resetear intentos al tener éxito
+    if (usuario.intentos_fallidos > 0 || usuario.bloqueado_hasta) {
+      usuario.intentos_fallidos = 0;
+      usuario.bloqueado_hasta = null;
+      await this.usuariosRepo.save(usuario);
+    }
 
     const payload: JwtPayload = { sub: usuario.id_usuario, correo: usuario.correo, rol: usuario.rol.nombre };
     return {

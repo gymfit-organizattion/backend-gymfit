@@ -22,6 +22,9 @@ export class Prospecto {
   @Column({ name: 'origen', type: 'varchar', length: 30, nullable: true })
   origen!: string | null;
 
+  @Column({ name: 'estado', type: 'varchar', length: 30, default: 'Pendiente' })
+  estado!: string;
+
   @CreateDateColumn({ name: 'fecha_registro', type: 'timestamptz' })
   fecha_registro!: Date;
 }

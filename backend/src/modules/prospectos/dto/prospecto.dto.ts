@@ -28,4 +28,22 @@ export class CreateProspectoDto {
   origen?: string;
 }
 
-export class UpdateProspectoDto extends PartialType(CreateProspectoDto) {}
+export class UpdateProspectoDto extends PartialType(CreateProspectoDto) {
+  @IsOptional()
+  @IsString()
+  estado?: string;
+}
+
+export class ConvertirProspectoDto {
+  @IsNotEmpty({ message: 'La identificación es obligatoria para ser socio' })
+  @IsString()
+  identificacion!: string;
+
+  @IsNotEmpty({ message: 'El correo es obligatorio para crear el usuario' })
+  @IsString()
+  correo!: string;
+
+  @IsNotEmpty({ message: 'La contraseña es obligatoria' })
+  @IsString()
+  password!: string;
+}

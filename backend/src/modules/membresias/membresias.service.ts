@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Membresia } from './entities/membresia.entity';
@@ -8,6 +9,8 @@ import { CreateMembresiaDto, UpdateMembresiaDto } from './dto/membresia.dto';
 
 @Injectable()
 export class MembresiasService {
+  private readonly logger = new Logger(MembresiasService.name);
+
   constructor(
     @InjectRepository(Membresia)
     private readonly membresiaRepo: Repository<Membresia>,
@@ -59,6 +62,29 @@ export class MembresiasService {
     const m = await this.findOne(id);
     Object.assign(m, dto);
     return this.membresiaRepo.save(m);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async actualizarMembresiasVencidas() {
+    this.logger.log('Iniciando tarea programada: Actualización de membresías vencidas');
+    const hoy = new Date();
+    
+    // Buscar membresías activas cuya fecha de fin ya pasó
+    const membresiasVencidas = await this.membresiaRepo
+      .createQueryBuilder('membresia')
+      .where('membresia.estado = :estado', { estado: 'activa' })
+      .andWhere('membresia.fecha_fin < :hoy', { hoy })
+      .getMany();
+
+    if (membresiasVencidas.length > 0) {
+      for (const m of membresiasVencidas) {
+        m.estado = 'vencida';
+      }
+      await this.membresiaRepo.save(membresiasVencidas);
+      this.logger.log(`Se actualizaron ${membresiasVencidas.length} membresías a estado 'vencida'.`);
+    } else {
+      this.logger.log('No hay membresías vencidas para actualizar hoy.');
+    }
   }
 
   async remove(id: number): Promise<void> {

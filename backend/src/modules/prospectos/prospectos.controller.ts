@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { ProspectosService } from './prospectos.service';
-import { CreateProspectoDto, UpdateProspectoDto } from './dto/prospecto.dto';
+import { CreateProspectoDto, UpdateProspectoDto, ConvertirProspectoDto } from './dto/prospecto.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('Prospectos')
@@ -36,11 +36,20 @@ export class ProspectosController {
 
   @Put(':id')
   @Roles('admin', 'recepcionista')
-  @ApiOperation({ summary: 'Actualizar prospecto (HU-15)', description: 'Actualiza estado, notas y datos del prospecto. Permite marcarlo como convertido a socio.' })
+  @ApiOperation({ summary: 'Actualizar prospecto (HU-15)', description: 'Actualiza estado, notas y datos del prospecto.' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Prospecto actualizado' })
   @ApiResponse({ status: 404, description: 'Prospecto no encontrado' })
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProspectoDto) { return this.prospectosService.update(id, dto); }
+
+  @Post(':id/convertir')
+  @Roles('admin', 'recepcionista')
+  @ApiOperation({ summary: 'Convertir prospecto a socio (HU-05)' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 201, description: 'Prospecto convertido a socio exitosamente' })
+  convertir(@Param('id', ParseIntPipe) id: number, @Body() dto: ConvertirProspectoDto) { 
+    return this.prospectosService.convertir(id, dto); 
+  }
 
   @Delete(':id')
   @Roles('admin')
