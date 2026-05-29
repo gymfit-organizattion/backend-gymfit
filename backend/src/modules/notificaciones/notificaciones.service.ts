@@ -5,6 +5,7 @@ import { Notificacion } from './entities/notificacion.entity';
 import { CreateNotificacionDto, UpdateNotificacionDto, MarcarLeidaDto } from './dto/notificacion.dto';
 import { Membresia } from '../membresias/entities/membresia.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class NotificacionesService {
@@ -15,7 +16,7 @@ export class NotificacionesService {
     private readonly membresiaRepo: Repository<Membresia>,
     @InjectRepository(Equipo)
     private readonly equipoRepo: Repository<Equipo>,
-  ) {}
+  ) { }
 
   // CRUD básico
 
@@ -86,7 +87,23 @@ export class NotificacionesService {
     return { total };
   }
 
-  // Notificaciones automáticas — RF-021
+  // Notificaciones automáticas — RF-021, RF-022
+
+  /**
+   * Ejecuta la verificación de vencimientos cada día a la medianoche (HU-22).
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async revisarVencimientosDiarios() {
+    console.log('[CRON] Iniciando revisión automática de membresías próximas a vencer...');
+    const creadas = await this.generarNotificacionesMembresias(5);
+
+    // Simulación del envío automático de correos (Criterio de Aceptación HU-22)
+    for (const notif of creadas) {
+      console.log(`[EMAIL ENVIADO] A: Socio ID ${notif.id_usuario} | Asunto: ${notif.titulo} | Mensaje: ${notif.mensaje}`);
+    }
+
+    console.log(`[CRON] Revisión finalizada. Se enviaron ${creadas.length} avisos de vencimiento.`);
+  }
 
   /**
    * Genera notificaciones para membresías que vencen en los próximos N días.

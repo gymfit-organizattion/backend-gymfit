@@ -17,6 +17,9 @@ export class Equipo {
   @Column({ name: 'nombre', type: 'varchar', length: 100 })
   nombre!: string;
 
+  @Column({ name: 'codigo_barras', type: 'varchar', length: 100, nullable: true, unique: true })
+  codigo_barras!: string | null;
+
   @Column({ name: 'tipo', type: 'varchar', length: 50, nullable: true })
   tipo!: string | null;
 

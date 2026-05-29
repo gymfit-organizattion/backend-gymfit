@@ -14,6 +14,11 @@ export class CreateEquipoDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
+  codigo_barras?: string;
+
+  @IsOptional()
+  @IsString()
   @MaxLength(50)
   tipo?: string;
 
