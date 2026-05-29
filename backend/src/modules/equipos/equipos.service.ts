@@ -14,6 +14,7 @@ export class EquiposService {
   create(dto: CreateEquipoDto): Promise<Equipo> {
     const equipo = this.equipoRepo.create({
       nombre: dto.nombre,
+      codigo_barras: dto.codigo_barras ?? null,
       tipo: dto.tipo ?? null,
       estado: dto.estado ?? 'disponible',
       ubicacion: dto.ubicacion ?? null,

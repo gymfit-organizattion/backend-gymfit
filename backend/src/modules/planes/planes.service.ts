@@ -36,6 +36,16 @@ export class PlanesService {
 
   async remove(id: number): Promise<void> {
     const plan = await this.findOne(id);
-    await this.planRepo.remove(plan);
+    try {
+      await this.planRepo.remove(plan);
+    } catch (error: any) {
+      // 23503 is the PostgreSQL error code for foreign key violation
+      if (error.code === '23503' || error.message.includes('foreign key')) {
+        plan.activo = false;
+        await this.planRepo.save(plan);
+      } else {
+        throw error;
+      }
+    }
   }
 }
