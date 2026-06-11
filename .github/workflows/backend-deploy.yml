@@ -50,12 +50,17 @@ jobs:
 
       - name: Run Tests
         env:
-          DB_HOST: localhost
+          DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_USERNAME: admin
           DB_PASSWORD: password123
           DB_NAME: gymfit_test
           NODE_ENV: test
+          JWT_SECRET: change_me_dummy_secret_for_actions_runs_only
+          JWT_EXPIRES_IN: 8h
+          JWT_REFRESH_EXPIRATION: 7d
+          CORS_ORIGIN: https://gym-fit-sandy.vercel.app
+          BCRYPT_SALT_ROUNDS: 10
         run: |
           npm run test -- --passWithNoTests
           npm run test:e2e
