@@ -22,6 +22,10 @@ services:
         value: gym-fit-sandy.vercel.app
       - key: BCRYPT_SALT_ROUNDS
         value: 10
+      - key: NODE_VERSION
+        value: 20
+      - key: DB_SYNCHRONIZE
+        value: "true"
 
 databases:
   - name: gymfit-db

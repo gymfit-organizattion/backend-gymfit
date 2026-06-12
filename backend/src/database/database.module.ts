@@ -70,7 +70,7 @@ const ENTITIES = [
                 database: config.get<string>('DB_NAME'),
               }),
           entities: ENTITIES,
-          synchronize: !isProduction,
+          synchronize: config.get<string>('DB_SYNCHRONIZE') === 'true' || !isProduction,
           logging: !isProduction,
           ssl: isProduction ? { rejectUnauthorized: false } : false,
         };
