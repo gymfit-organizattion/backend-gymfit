@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Evaluacion } from './entities/evaluacion.entity';
@@ -20,9 +24,16 @@ export class EvaluacionesService {
     private readonly asignacionRepo: Repository<Asignacion>,
   ) {}
 
-  async create(dto: CreateEvaluacionDto, idUsuario: number, esAdmin: boolean): Promise<Evaluacion> {
-    const socio = await this.socioRepo.findOne({ where: { id_socio: dto.id_socio } });
-    if (!socio) throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
+  async create(
+    dto: CreateEvaluacionDto,
+    idUsuario: number,
+    esAdmin: boolean,
+  ): Promise<Evaluacion> {
+    const socio = await this.socioRepo.findOne({
+      where: { id_socio: dto.id_socio },
+    });
+    if (!socio)
+      throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
 
     if (!esAdmin) {
       const asignado = await this.asignacionRepo.findOne({
@@ -32,7 +43,9 @@ export class EvaluacionesService {
         },
       });
       if (!asignado) {
-        throw new ForbiddenException('No tienes permiso para evaluar a este socio. No estás asignado como su entrenador.');
+        throw new ForbiddenException(
+          'No tienes permiso para evaluar a este socio. No estás asignado como su entrenador.',
+        );
       }
     }
 
@@ -58,7 +71,8 @@ export class EvaluacionesService {
       where: { id_evaluacion: id },
       relations: ['socio', 'socio.usuario'],
     });
-    if (!e) throw new NotFoundException(`Evaluación con id ${id} no encontrada`);
+    if (!e)
+      throw new NotFoundException(`Evaluación con id ${id} no encontrada`);
     return e;
   }
 
@@ -69,9 +83,14 @@ export class EvaluacionesService {
     });
   }
 
-  async update(id: number, dto: UpdateEvaluacionDto, idUsuario: number, esAdmin: boolean): Promise<Evaluacion> {
+  async update(
+    id: number,
+    dto: UpdateEvaluacionDto,
+    idUsuario: number,
+    esAdmin: boolean,
+  ): Promise<Evaluacion> {
     const e = await this.findOne(id);
-    
+
     if (!esAdmin) {
       const asignado = await this.asignacionRepo.findOne({
         where: {
@@ -80,7 +99,9 @@ export class EvaluacionesService {
         },
       });
       if (!asignado) {
-        throw new ForbiddenException('No tienes permiso para actualizar esta evaluación. No eres el entrenador asignado a este socio.');
+        throw new ForbiddenException(
+          'No tienes permiso para actualizar esta evaluación. No eres el entrenador asignado a este socio.',
+        );
       }
     }
 

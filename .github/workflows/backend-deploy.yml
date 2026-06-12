@@ -1,0 +1,80 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    #contenedor para la db
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password123
+          POSTGRES_DB: gymfit_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './backend/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint and formatting check
+        run: npm run lint
+
+      - name: Run Tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: Admin01@
+          DB_NAME: gymfit
+          NODE_ENV: test
+          JWT_SECRET: CHANGE_ME_USE_A_RANDOM_64_CHAR_SECRET
+          JWT_EXPIRES_IN: 8h
+          JWT_REFRESH_EXPIRATION: 7d
+          CORS_ORIGIN: https://gym-fit-sandy.vercel.app
+          BCRYPT_SALT_ROUNDS: 10
+        run: |
+          npm run test -- --passWithNoTests
+          npm run test:e2e
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Trigger Render Deploy Hook
+        if: success()
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "⚠️ RENDER_DEPLOY_HOOK_URL no está configurado en los secretos de GitHub. Saltando despliegue."
+          else
+            curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+          fi

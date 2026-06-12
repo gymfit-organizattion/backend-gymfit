@@ -1,6 +1,11 @@
 import {
-  IsDateString, IsInt, IsNotEmpty, IsOptional,
-  IsPositive, IsString, MaxLength,
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
@@ -16,11 +21,17 @@ export class CreateMembresiaDto {
   id_plan!: number;
 
   @IsNotEmpty({ message: 'La fecha de inicio es obligatoria' })
-  @IsDateString({}, { message: 'La fecha de inicio debe tener formato YYYY-MM-DD' })
+  @IsDateString(
+    {},
+    { message: 'La fecha de inicio debe tener formato YYYY-MM-DD' },
+  )
   fecha_inicio!: string;
 
   @IsNotEmpty({ message: 'La fecha de fin es obligatoria' })
-  @IsDateString({}, { message: 'La fecha de fin debe tener formato YYYY-MM-DD' })
+  @IsDateString(
+    {},
+    { message: 'La fecha de fin debe tener formato YYYY-MM-DD' },
+  )
   fecha_fin!: string;
 }
 

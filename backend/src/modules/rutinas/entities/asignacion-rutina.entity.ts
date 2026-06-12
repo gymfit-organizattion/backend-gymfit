@@ -24,8 +24,10 @@ export class AsignacionRutina {
   @IsDateString()
   fecha_asignacion!: string;
 
-  
-  @ManyToOne(() => Rutina, (r) => r.asignaciones, { nullable: false, eager: true })
+  @ManyToOne(() => Rutina, (r) => r.asignaciones, {
+    nullable: false,
+    eager: true,
+  })
   @JoinColumn({ name: 'id_rutina' })
   rutina!: Rutina;
 

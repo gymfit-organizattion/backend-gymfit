@@ -11,7 +11,14 @@ import { Inscripcion } from '../inscripciones/entities/inscripcion.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Membresia, Asistencia, Equipo, AlertaStock, Socio, Inscripcion]),
+    TypeOrmModule.forFeature([
+      Membresia,
+      Asistencia,
+      Equipo,
+      AlertaStock,
+      Socio,
+      Inscripcion,
+    ]),
   ],
   controllers: [ReportesController],
   providers: [ReportesService],

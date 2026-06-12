@@ -6,8 +6,8 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Usuario }   from '../../usuarios/entities/usuario.entity';
-import { Clase }     from '../../clases/entities/clase.entity';
+import { Usuario } from '../../usuarios/entities/usuario.entity';
+import { Clase } from '../../clases/entities/clase.entity';
 import { Asignacion } from './asignacion.entity';
 
 @Entity('entrenador')
@@ -15,7 +15,12 @@ export class Entrenador {
   @PrimaryGeneratedColumn({ name: 'id_entrenador' })
   id_entrenador!: number;
 
-  @Column({ name: 'especialidad', type: 'varchar', length: 100, nullable: true })
+  @Column({
+    name: 'especialidad',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   especialidad!: string | null;
 
   @Column({ name: 'experiencia', type: 'integer', nullable: true })

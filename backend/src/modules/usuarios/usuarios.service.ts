@@ -29,20 +29,23 @@ export class UsuariosService {
     this.saltRounds = parseInt(raw, 10) || 10;
   }
 
-  //  Crear nuevo usuario 
+  //  Crear nuevo usuario
   async create(dto: CreateUsuarioDto): Promise<Omit<Usuario, 'password'>> {
     const correoExiste = await this.usuarioRepo.findOne({
       where: { correo: dto.correo },
     });
-    if (correoExiste) throw new ConflictException('El correo ya está registrado');
+    if (correoExiste)
+      throw new ConflictException('El correo ya está registrado');
 
     const idExiste = await this.usuarioRepo.findOne({
       where: { identificacion: dto.identificacion },
     });
-    if (idExiste) throw new ConflictException('La identificación ya está registrada');
+    if (idExiste)
+      throw new ConflictException('La identificación ya está registrada');
 
     const rol = await this.rolRepo.findOne({ where: { id_rol: dto.id_rol } });
-    if (!rol) throw new NotFoundException(`Rol con id ${dto.id_rol} no encontrado`);
+    if (!rol)
+      throw new NotFoundException(`Rol con id ${dto.id_rol} no encontrado`);
 
     const hash = await bcrypt.hash(dto.password, this.saltRounds);
     const usuario = this.usuarioRepo.create({ ...dto, password: hash, rol });
@@ -52,7 +55,7 @@ export class UsuariosService {
     return resultado as Omit<Usuario, 'password'>;
   }
 
-  //  Listar todos 
+  //  Listar todos
   async findAll(): Promise<Omit<Usuario, 'password'>[]> {
     const usuarios = await this.usuarioRepo.find({
       relations: ['rol'],
@@ -61,28 +64,34 @@ export class UsuariosService {
     return usuarios.map(({ password, ...u }) => u as Omit<Usuario, 'password'>);
   }
 
-  //  Buscar por id 
+  //  Buscar por id
   async findOne(id: number): Promise<Omit<Usuario, 'password'>> {
     const usuario = await this.usuarioRepo.findOne({
       where: { id_usuario: id },
       relations: ['rol'],
     });
-    if (!usuario) throw new NotFoundException(`Usuario con id ${id} no encontrado`);
+    if (!usuario)
+      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
     const { password, ...resultado } = usuario;
     return resultado as Omit<Usuario, 'password'>;
   }
 
-  //  Actualizar 
-  async update(id: number, dto: UpdateUsuarioDto): Promise<Omit<Usuario, 'password'>> {
+  //  Actualizar
+  async update(
+    id: number,
+    dto: UpdateUsuarioDto,
+  ): Promise<Omit<Usuario, 'password'>> {
     const usuario = await this.usuarioRepo.findOne({
       where: { id_usuario: id },
       relations: ['rol'],
     });
-    if (!usuario) throw new NotFoundException(`Usuario con id ${id} no encontrado`);
+    if (!usuario)
+      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
 
     if (dto.id_rol) {
       const rol = await this.rolRepo.findOne({ where: { id_rol: dto.id_rol } });
-      if (!rol) throw new NotFoundException(`Rol con id ${dto.id_rol} no encontrado`);
+      if (!rol)
+        throw new NotFoundException(`Rol con id ${dto.id_rol} no encontrado`);
       usuario.rol = rol;
     }
 
@@ -96,10 +105,13 @@ export class UsuariosService {
     return resultado as Omit<Usuario, 'password'>;
   }
 
-  // Eliminar (soft-delete: estado 
+  // Eliminar (soft-delete: estado
   async remove(id: number): Promise<void> {
-    const usuario = await this.usuarioRepo.findOne({ where: { id_usuario: id } });
-    if (!usuario) throw new NotFoundException(`Usuario con id ${id} no encontrado`);
+    const usuario = await this.usuarioRepo.findOne({
+      where: { id_usuario: id },
+    });
+    if (!usuario)
+      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
     usuario.estado = false;
     await this.usuarioRepo.save(usuario);
   }

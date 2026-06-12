@@ -6,10 +6,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  //  Prefijo global 
+  //  Prefijo global
   app.setGlobalPrefix('api');
 
-  // CORS 
+  // CORS
   const corsOrigin = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
     : ['http://localhost:3000', 'http://localhost:3001'];
@@ -21,7 +21,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  //ValidationPipe global 
+  //ValidationPipe global
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -31,7 +31,7 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger / OpenAPI 
+  // Swagger / OpenAPI
   // Disponible en: http://localhost:3001/docs
   // Solo en desarrollo para no exponer la documentación en producción.
   if (process.env.NODE_ENV !== 'production') {
@@ -39,8 +39,8 @@ async function bootstrap() {
       .setTitle('GymFit API')
       .setDescription(
         'API REST del sistema de administración y control de GymFit. ' +
-        'Autenticación mediante JWT Bearer Token. ' +
-        'Usa el botón "Authorize" e ingresa tu token para probar rutas protegidas.',
+          'Autenticación mediante JWT Bearer Token. ' +
+          'Usa el botón "Authorize" e ingresa tu token para probar rutas protegidas.',
       )
       .setVersion('1.0')
       .addBearerAuth(
@@ -76,17 +76,19 @@ async function bootstrap() {
 
     SwaggerModule.setup('docs', app, document, {
       swaggerOptions: {
-        persistAuthorization: true,       // mantiene el token entre recargas
-        displayRequestDuration: true,     // muestra el tiempo de cada request
-        docExpansion: 'none',             // colapsa todos los endpoints por defecto
-        filter: true,                     // barra de búsqueda de endpoints
+        persistAuthorization: true, // mantiene el token entre recargas
+        displayRequestDuration: true, // muestra el tiempo de cada request
+        docExpansion: 'none', // colapsa todos los endpoints por defecto
+        filter: true, // barra de búsqueda de endpoints
         showExtensions: true,
-        tryItOutEnabled: true,            // "Try it out" habilitado por defecto
+        tryItOutEnabled: true, // "Try it out" habilitado por defecto
       },
       customSiteTitle: 'GymFit API Docs',
     });
 
-    console.log(`📚 Swagger disponible en: http://localhost:${process.env.PORT ?? 3001}/docs`);
+    console.log(
+      `📚 Swagger disponible en: http://localhost:${process.env.PORT ?? 3001}/docs`,
+    );
   }
 
   const port = process.env.PORT ?? 3001;

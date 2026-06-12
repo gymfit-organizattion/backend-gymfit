@@ -1,8 +1,18 @@
 import {
-  Controller, Post, Put, Body, Get, HttpCode, HttpStatus,
+  Controller,
+  Post,
+  Put,
+  Body,
+  Get,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
-  ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -31,10 +41,16 @@ export class AuthController {
       'Retorna un JWT listo para usar.',
   })
   @ApiBody({ type: RegisterDto })
-  @ApiResponse({ status: 201, description: 'Usuario creado — retorna access_token y datos del usuario' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario creado — retorna access_token y datos del usuario',
+  })
   @ApiResponse({ status: 400, description: 'Datos de validación incorrectos' })
   @ApiResponse({ status: 404, description: 'El rol indicado no existe' })
-  @ApiResponse({ status: 409, description: 'El correo o la identificación ya están registrados' })
+  @ApiResponse({
+    status: 409,
+    description: 'El correo o la identificación ya están registrados',
+  })
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
@@ -52,8 +68,14 @@ export class AuthController {
       'Retorna un JWT con duración de 8 horas.',
   })
   @ApiBody({ type: LoginDto })
-  @ApiResponse({ status: 200, description: 'Login exitoso — retorna access_token y datos del usuario' })
-  @ApiResponse({ status: 401, description: 'Credenciales incorrectas o usuario inactivo' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login exitoso — retorna access_token y datos del usuario',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Credenciales incorrectas o usuario inactivo',
+  })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
@@ -64,9 +86,13 @@ export class AuthController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Ver perfil propio',
-    description: 'Retorna los datos completos del usuario autenticado (sin contraseña).',
+    description:
+      'Retorna los datos completos del usuario autenticado (sin contraseña).',
   })
-  @ApiResponse({ status: 200, description: 'Datos del perfil del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Datos del perfil del usuario autenticado',
+  })
   @ApiResponse({ status: 401, description: 'Token inválido o expirado' })
   perfil(@UsuarioActual() usuario: Usuario) {
     return this.authService.perfil(usuario.id_usuario);
@@ -101,8 +127,14 @@ export class AuthController {
       'Requiere la contraseña actual (verificada con bcrypt) antes de permitir el cambio.',
   })
   @ApiBody({ type: CambiarPasswordDto })
-  @ApiResponse({ status: 200, description: 'Contraseña actualizada correctamente' })
-  @ApiResponse({ status: 400, description: 'Contraseña actual incorrecta o nueva igual a la actual' })
+  @ApiResponse({
+    status: 200,
+    description: 'Contraseña actualizada correctamente',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Contraseña actual incorrecta o nueva igual a la actual',
+  })
   @ApiResponse({ status: 401, description: 'Token inválido o expirado' })
   cambiarPassword(
     @UsuarioActual() usuario: Usuario,

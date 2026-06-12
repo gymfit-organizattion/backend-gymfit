@@ -1,5 +1,12 @@
 import {
-  IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, MaxLength, Min, IsOptional
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  MaxLength,
+  Min,
+  IsOptional,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 

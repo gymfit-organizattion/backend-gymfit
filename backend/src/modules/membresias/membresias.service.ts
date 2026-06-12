@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -21,16 +26,29 @@ export class MembresiasService {
   ) {}
 
   async create(dto: CreateMembresiaDto): Promise<Membresia> {
-    const socio = await this.socioRepo.findOne({ where: { id_socio: dto.id_socio } });
-    if (!socio) throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
+    const socio = await this.socioRepo.findOne({
+      where: { id_socio: dto.id_socio },
+    });
+    if (!socio)
+      throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
 
-    const plan = await this.planRepo.findOne({ where: { id_plan: dto.id_plan } });
-    if (!plan) throw new NotFoundException(`Plan con id ${dto.id_plan} no encontrado`);
+    const plan = await this.planRepo.findOne({
+      where: { id_plan: dto.id_plan },
+    });
+    if (!plan)
+      throw new NotFoundException(`Plan con id ${dto.id_plan} no encontrado`);
 
     if (new Date(dto.fecha_fin) <= new Date(dto.fecha_inicio))
-      throw new BadRequestException('La fecha de fin debe ser posterior a la fecha de inicio');
+      throw new BadRequestException(
+        'La fecha de fin debe ser posterior a la fecha de inicio',
+      );
 
-    const membresia = this.membresiaRepo.create({ socio, plan, ...dto, estado: 'activa' });
+    const membresia = this.membresiaRepo.create({
+      socio,
+      plan,
+      ...dto,
+      estado: 'activa',
+    });
     return this.membresiaRepo.save(membresia);
   }
 
@@ -66,9 +84,11 @@ export class MembresiasService {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async actualizarMembresiasVencidas() {
-    this.logger.log('Iniciando tarea programada: Actualización de membresías vencidas');
+    this.logger.log(
+      'Iniciando tarea programada: Actualización de membresías vencidas',
+    );
     const hoy = new Date();
-    
+
     // Buscar membresías activas cuya fecha de fin ya pasó
     const membresiasVencidas = await this.membresiaRepo
       .createQueryBuilder('membresia')
@@ -81,7 +101,9 @@ export class MembresiasService {
         m.estado = 'vencida';
       }
       await this.membresiaRepo.save(membresiasVencidas);
-      this.logger.log(`Se actualizaron ${membresiasVencidas.length} membresías a estado 'vencida'.`);
+      this.logger.log(
+        `Se actualizaron ${membresiasVencidas.length} membresías a estado 'vencida'.`,
+      );
     } else {
       this.logger.log('No hay membresías vencidas para actualizar hoy.');
     }

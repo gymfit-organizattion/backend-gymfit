@@ -24,15 +24,19 @@ export class InscripcionesService {
 
   async create(dto: CreateInscripcionDto): Promise<Inscripcion> {
     // Verificar socio
-    const socio = await this.socioRepo.findOne({ where: { id_socio: dto.id_socio } });
-    if (!socio) throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
+    const socio = await this.socioRepo.findOne({
+      where: { id_socio: dto.id_socio },
+    });
+    if (!socio)
+      throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
 
     // Verificar clase y cupos
     const clase = await this.claseRepo.findOne({
       where: { id_clase: dto.id_clase },
       relations: ['inscripciones'],
     });
-    if (!clase) throw new NotFoundException(`Clase con id ${dto.id_clase} no encontrada`);
+    if (!clase)
+      throw new NotFoundException(`Clase con id ${dto.id_clase} no encontrada`);
 
     const inscritos = clase.inscripciones?.length ?? 0;
     if (inscritos >= clase.cupo)
@@ -54,7 +58,13 @@ export class InscripcionesService {
 
   findAll(): Promise<Inscripcion[]> {
     return this.inscripcionRepo.find({
-      relations: ['socio', 'socio.usuario', 'clase', 'clase.entrenador', 'clase.entrenador.usuario'],
+      relations: [
+        'socio',
+        'socio.usuario',
+        'clase',
+        'clase.entrenador',
+        'clase.entrenador.usuario',
+      ],
       order: { id_inscripcion: 'DESC' },
     });
   }
@@ -64,7 +74,8 @@ export class InscripcionesService {
       where: { id_inscripcion: id },
       relations: ['socio', 'socio.usuario', 'clase'],
     });
-    if (!i) throw new NotFoundException(`Inscripción con id ${id} no encontrada`);
+    if (!i)
+      throw new NotFoundException(`Inscripción con id ${id} no encontrada`);
     return i;
   }
 
@@ -85,8 +96,11 @@ export class InscripcionesService {
   }
 
   async remove(id: number): Promise<void> {
-    const i = await this.inscripcionRepo.findOne({ where: { id_inscripcion: id } });
-    if (!i) throw new NotFoundException(`Inscripción con id ${id} no encontrada`);
+    const i = await this.inscripcionRepo.findOne({
+      where: { id_inscripcion: id },
+    });
+    if (!i)
+      throw new NotFoundException(`Inscripción con id ${id} no encontrada`);
     await this.inscripcionRepo.remove(i);
   }
 }

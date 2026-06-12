@@ -24,7 +24,6 @@ export class Asignacion {
   @IsNotEmpty({ message: 'La fecha de asignación es obligatoria' })
   fecha_asignacion!: string;
 
-  
   @ManyToOne(() => Entrenador, (e) => e.asignaciones, { nullable: false })
   @JoinColumn({ name: 'id_entrenador' })
   entrenador!: Entrenador;

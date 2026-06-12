@@ -19,12 +19,22 @@ export class Notificacion {
    * Se usa @JoinColumn con referencedColumnName para mapear id_usuario
    * como FK sin declarar un @Column separado (evita conflicto de mapeo).
    */
-  @ManyToOne(() => Usuario, { nullable: true, eager: false, onDelete: 'SET NULL' })
+  @ManyToOne(() => Usuario, {
+    nullable: true,
+    eager: false,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'id_usuario' })
   usuario!: Usuario | null;
 
   // Columna virtual para leer el FK sin cargar la relación completa
-  @Column({ name: 'id_usuario', type: 'int', nullable: true, insert: false, update: false })
+  @Column({
+    name: 'id_usuario',
+    type: 'int',
+    nullable: true,
+    insert: false,
+    update: false,
+  })
   id_usuario!: number | null;
 
   @Column({ name: 'tipo', type: 'varchar', length: 50 })
@@ -44,7 +54,12 @@ export class Notificacion {
   // ID del recurso relacionado (id_equipo, id_membresia, etc.)
   referencia_id!: number | null;
 
-  @Column({ name: 'referencia_tipo', type: 'varchar', length: 50, nullable: true })
+  @Column({
+    name: 'referencia_tipo',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   // Tipo del recurso: 'equipo', 'membresia', 'socio', etc.
   referencia_tipo!: string | null;
 

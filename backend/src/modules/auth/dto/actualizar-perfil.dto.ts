@@ -4,7 +4,8 @@ import { IsOptional, IsString, MaxLength } from 'class-validator';
 export class ActualizarPerfilDto {
   @ApiPropertyOptional({
     example: 'Juan Pérez',
-    description: 'Nuevo nombre del usuario (campo no crítico — editable desde el perfil propio)',
+    description:
+      'Nuevo nombre del usuario (campo no crítico — editable desde el perfil propio)',
     maxLength: 100,
   })
   @IsOptional()
@@ -14,7 +15,8 @@ export class ActualizarPerfilDto {
 
   @ApiPropertyOptional({
     example: '3001234567',
-    description: 'Nuevo teléfono de contacto (campo no crítico — editable desde el perfil propio)',
+    description:
+      'Nuevo teléfono de contacto (campo no crítico — editable desde el perfil propio)',
     maxLength: 20,
   })
   @IsOptional()

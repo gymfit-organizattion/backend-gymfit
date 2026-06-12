@@ -1,8 +1,13 @@
 import {
-  IsInt, IsNotEmpty, IsOptional, IsString,
-  MaxLength, Min, IsPositive, IsDateString,
-} from 'class-validator'
-;
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+  IsPositive,
+  IsDateString,
+} from 'class-validator';
 
 export class CreateEntrenadorDto {
   @IsNotEmpty({ message: 'El id del usuario es obligatorio' })
@@ -20,4 +25,3 @@ export class CreateEntrenadorDto {
   @Min(0)
   experiencia?: number;
 }
-

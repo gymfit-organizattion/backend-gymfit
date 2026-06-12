@@ -92,7 +92,15 @@ export class ReportesService {
     const asistencias = await query.orderBy('a.fecha', 'DESC').getMany();
 
     // Asistencias por día de la semana
-    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const diasSemana = [
+      'Domingo',
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+    ];
     const por_dia: Record<string, number> = {};
     for (const a of asistencias) {
       const dia = diasSemana[new Date(a.fecha).getDay()];
@@ -105,7 +113,10 @@ export class ReportesService {
       const id = a.socio?.id_socio;
       if (id) {
         if (!frecuencia[id]) {
-          frecuencia[id] = { nombre: a.socio?.usuario?.nombre ?? 'N/A', total: 0 };
+          frecuencia[id] = {
+            nombre: a.socio?.usuario?.nombre ?? 'N/A',
+            total: 0,
+          };
         }
         frecuencia[id].total++;
       }
@@ -131,10 +142,14 @@ export class ReportesService {
       order: { nombre: 'ASC' },
     });
 
-    const alertasActivas = await this.alertaRepo.count({ where: { estado: 'activa' } });
+    const alertasActivas = await this.alertaRepo.count({
+      where: { estado: 'activa' },
+    });
 
     const bajo_stock = equipos.filter((e) => e.cantidad <= e.stock_minimo);
-    const sobre_stock = equipos.filter((e) => e.stock_maximo != null && e.cantidad >= e.stock_maximo);
+    const sobre_stock = equipos.filter(
+      (e) => e.stock_maximo != null && e.cantidad >= e.stock_maximo,
+    );
     const normal = equipos.filter(
       (e) =>
         e.cantidad > e.stock_minimo &&
@@ -166,15 +181,18 @@ export class ReportesService {
         stock_minimo: e.stock_minimo,
         stock_maximo: e.stock_maximo,
         precio_unitario: e.precio_unitario,
-        valor_total: e.precio_unitario != null ? Number(e.precio_unitario) * e.cantidad : null,
+        valor_total:
+          e.precio_unitario != null
+            ? Number(e.precio_unitario) * e.cantidad
+            : null,
         estado_stock:
           e.cantidad === 0
             ? 'agotado'
             : e.cantidad <= e.stock_minimo
-            ? 'bajo_stock'
-            : e.stock_maximo != null && e.cantidad >= e.stock_maximo
-            ? 'sobre_stock'
-            : 'normal',
+              ? 'bajo_stock'
+              : e.stock_maximo != null && e.cantidad >= e.stock_maximo
+                ? 'sobre_stock'
+                : 'normal',
       })),
     };
   }
@@ -185,7 +203,11 @@ export class ReportesService {
 
   async reporteGeneral() {
     const hoy = new Date().toISOString().split('T')[0];
-    const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    const inicioMes = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1,
+    )
       .toISOString()
       .split('T')[0];
 

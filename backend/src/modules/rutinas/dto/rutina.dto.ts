@@ -1,12 +1,17 @@
 import {
-  IsNotEmpty, IsOptional, IsString, IsInt,
-  IsPositive, MaxLength, Min,
-  ValidateNested, IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsPositive,
+  MaxLength,
+  Min,
+  ValidateNested,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 import { RutinaEjercicioItemDto } from './rutina-ejercicio.dto';
-
 
 //  Crear rutina (RF-011)
 export class CreateRutinaDto {

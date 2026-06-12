@@ -4,7 +4,10 @@ import { Repository } from 'typeorm';
 import { Mantenimiento } from './entities/mantenimiento.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
-import { CreateMantenimientoDto, UpdateMantenimientoDto } from './dto/mantenimiento.dto';
+import {
+  CreateMantenimientoDto,
+  UpdateMantenimientoDto,
+} from './dto/mantenimiento.dto';
 
 @Injectable()
 export class MantenimientoService {
@@ -18,13 +21,23 @@ export class MantenimientoService {
   ) {}
 
   async create(dto: CreateMantenimientoDto): Promise<Mantenimiento> {
-    const equipo = await this.equipoRepo.findOne({ where: { id_equipo: dto.id_equipo } });
-    if (!equipo) throw new NotFoundException(`Equipo con id ${dto.id_equipo} no encontrado`);
+    const equipo = await this.equipoRepo.findOne({
+      where: { id_equipo: dto.id_equipo },
+    });
+    if (!equipo)
+      throw new NotFoundException(
+        `Equipo con id ${dto.id_equipo} no encontrado`,
+      );
 
     let usuario: Usuario | null = null;
     if (dto.id_usuario) {
-      usuario = await this.usuarioRepo.findOne({ where: { id_usuario: dto.id_usuario } });
-      if (!usuario) throw new NotFoundException(`Usuario con id ${dto.id_usuario} no encontrado`);
+      usuario = await this.usuarioRepo.findOne({
+        where: { id_usuario: dto.id_usuario },
+      });
+      if (!usuario)
+        throw new NotFoundException(
+          `Usuario con id ${dto.id_usuario} no encontrado`,
+        );
     }
 
     const mantenimiento = this.mantenimientoRepo.create({
@@ -48,7 +61,8 @@ export class MantenimientoService {
       where: { id_mantenimiento: id },
       relations: ['equipo', 'usuario'],
     });
-    if (!m) throw new NotFoundException(`Mantenimiento con id ${id} no encontrado`);
+    if (!m)
+      throw new NotFoundException(`Mantenimiento con id ${id} no encontrado`);
     return m;
   }
 
@@ -60,21 +74,34 @@ export class MantenimientoService {
     });
   }
 
-  async update(id: number, dto: UpdateMantenimientoDto): Promise<Mantenimiento> {
+  async update(
+    id: number,
+    dto: UpdateMantenimientoDto,
+  ): Promise<Mantenimiento> {
     const m = await this.findOne(id);
     if (dto.fecha !== undefined) m.fecha = dto.fecha;
     if (dto.descripcion !== undefined) m.descripcion = dto.descripcion ?? null;
     if (dto.id_equipo !== undefined) {
-      const equipo = await this.equipoRepo.findOne({ where: { id_equipo: dto.id_equipo } });
-      if (!equipo) throw new NotFoundException(`Equipo con id ${dto.id_equipo} no encontrado`);
+      const equipo = await this.equipoRepo.findOne({
+        where: { id_equipo: dto.id_equipo },
+      });
+      if (!equipo)
+        throw new NotFoundException(
+          `Equipo con id ${dto.id_equipo} no encontrado`,
+        );
       m.equipo = equipo;
     }
     if (dto.id_usuario !== undefined) {
       if (dto.id_usuario === null) {
         m.usuario = null;
       } else {
-        const usuario = await this.usuarioRepo.findOne({ where: { id_usuario: dto.id_usuario } });
-        if (!usuario) throw new NotFoundException(`Usuario con id ${dto.id_usuario} no encontrado`);
+        const usuario = await this.usuarioRepo.findOne({
+          where: { id_usuario: dto.id_usuario },
+        });
+        if (!usuario)
+          throw new NotFoundException(
+            `Usuario con id ${dto.id_usuario} no encontrado`,
+          );
         m.usuario = usuario;
       }
     }

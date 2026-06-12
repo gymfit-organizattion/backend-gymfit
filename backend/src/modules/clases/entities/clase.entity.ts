@@ -39,8 +39,10 @@ export class Clase {
   @Min(1, { message: 'El cupo debe ser mayor a 0' })
   cupo!: number;
 
-  
-  @ManyToOne(() => Entrenador, (e) => e.clases, { nullable: false, eager: true })
+  @ManyToOne(() => Entrenador, (e) => e.clases, {
+    nullable: false,
+    eager: true,
+  })
   @JoinColumn({ name: 'id_entrenador' })
   entrenador!: Entrenador;
 

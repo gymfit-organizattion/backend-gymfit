@@ -34,42 +34,69 @@ export class AuthService {
     this.saltRounds = parseInt(raw, 10) || 10;
   }
 
-  //  Register (HU-01) 
+  //  Register (HU-01)
   async register(dto: RegisterDto) {
-    const correoExiste = await this.usuariosRepo.findOne({ where: { correo: dto.correo } });
-    if (correoExiste) throw new ConflictException('El correo ya está registrado');
+    const correoExiste = await this.usuariosRepo.findOne({
+      where: { correo: dto.correo },
+    });
+    if (correoExiste)
+      throw new ConflictException('El correo ya está registrado');
 
-    const idExiste = await this.usuariosRepo.findOne({ where: { identificacion: dto.identificacion } });
-    if (idExiste) throw new ConflictException('La identificación ya está registrada');
+    const idExiste = await this.usuariosRepo.findOne({
+      where: { identificacion: dto.identificacion },
+    });
+    if (idExiste)
+      throw new ConflictException('La identificación ya está registrada');
 
     const rol = await this.rolRepo.findOne({ where: { id_rol: dto.id_rol } });
-    if (!rol) throw new NotFoundException(`Rol con id ${dto.id_rol} no encontrado`);
+    if (!rol)
+      throw new NotFoundException(`Rol con id ${dto.id_rol} no encontrado`);
 
     const hash = await bcrypt.hash(dto.password, this.saltRounds);
     const usuario = this.usuariosRepo.create({
-      nombre: dto.nombre, identificacion: dto.identificacion,
-      correo: dto.correo, password: hash,
-      telefono: dto.telefono ?? null, rol, estado: true,
+      nombre: dto.nombre,
+      identificacion: dto.identificacion,
+      correo: dto.correo,
+      password: hash,
+      telefono: dto.telefono ?? null,
+      rol,
+      estado: true,
     });
     const guardado = await this.usuariosRepo.save(usuario);
 
-    const payload: JwtPayload = { sub: guardado.id_usuario, correo: guardado.correo, rol: rol.nombre };
+    const payload: JwtPayload = {
+      sub: guardado.id_usuario,
+      correo: guardado.correo,
+      rol: rol.nombre,
+    };
     return {
       access_token: this.jwtService.sign(payload),
-      usuario: { id_usuario: guardado.id_usuario, nombre: guardado.nombre, correo: guardado.correo, rol: rol.nombre },
+      usuario: {
+        id_usuario: guardado.id_usuario,
+        nombre: guardado.nombre,
+        correo: guardado.correo,
+        rol: rol.nombre,
+      },
     };
   }
 
-  //  Login (HU-02) 
+  //  Login (HU-02)
   async login(dto: LoginDto) {
     const usuario = await this.usuariosRepo.findOne({
-      where: { correo: dto.correo }, relations: ['rol'],
+      where: { correo: dto.correo },
+      relations: ['rol'],
     });
     if (!usuario) throw new UnauthorizedException('Credenciales incorrectas');
-    if (!usuario.estado) throw new UnauthorizedException('El usuario está inactivo');
+    if (!usuario.estado)
+      throw new UnauthorizedException('El usuario está inactivo');
 
-    if (usuario.bloqueado_hasta && new Date(usuario.bloqueado_hasta) > new Date()) {
-      throw new UnauthorizedException('Cuenta bloqueada temporalmente por múltiples intentos fallidos. Intente más tarde.');
+    if (
+      usuario.bloqueado_hasta &&
+      new Date(usuario.bloqueado_hasta) > new Date()
+    ) {
+      throw new UnauthorizedException(
+        'Cuenta bloqueada temporalmente por múltiples intentos fallidos. Intente más tarde.',
+      );
     }
 
     const passwordValida = await bcrypt.compare(dto.password, usuario.password);
@@ -89,54 +116,82 @@ export class AuthService {
       await this.usuariosRepo.save(usuario);
     }
 
-    const payload: JwtPayload = { sub: usuario.id_usuario, correo: usuario.correo, rol: usuario.rol.nombre };
+    const payload: JwtPayload = {
+      sub: usuario.id_usuario,
+      correo: usuario.correo,
+      rol: usuario.rol.nombre,
+    };
     return {
       access_token: this.jwtService.sign(payload),
-      usuario: { id_usuario: usuario.id_usuario, nombre: usuario.nombre, correo: usuario.correo, rol: usuario.rol.nombre },
+      usuario: {
+        id_usuario: usuario.id_usuario,
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        rol: usuario.rol.nombre,
+      },
     };
   }
 
-  //  Perfil (HU-03) 
+  //  Perfil (HU-03)
   async perfil(id: number): Promise<Omit<Usuario, 'password'>> {
     const usuario = await this.usuariosRepo.findOne({
-      where: { id_usuario: id }, relations: ['rol'],
+      where: { id_usuario: id },
+      relations: ['rol'],
     });
     if (!usuario) throw new UnauthorizedException('Usuario no encontrado');
     const { password, ...resultado } = usuario;
     return resultado as Omit<Usuario, 'password'>;
   }
 
-  //  Actualizar perfil propio — campos no críticos (HU-03) 
-  async actualizarPerfil(id: number, dto: ActualizarPerfilDto): Promise<Omit<Usuario, 'password'>> {
+  //  Actualizar perfil propio — campos no críticos (HU-03)
+  async actualizarPerfil(
+    id: number,
+    dto: ActualizarPerfilDto,
+  ): Promise<Omit<Usuario, 'password'>> {
     const usuario = await this.usuariosRepo.findOne({
-      where: { id_usuario: id }, relations: ['rol'],
+      where: { id_usuario: id },
+      relations: ['rol'],
     });
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
 
     // Solo campos no críticos: nombre y teléfono
-    if (dto.nombre   !== undefined) usuario.nombre   = dto.nombre.trim();
-    if (dto.telefono !== undefined) usuario.telefono = dto.telefono.trim() || null;
+    if (dto.nombre !== undefined) usuario.nombre = dto.nombre.trim();
+    if (dto.telefono !== undefined)
+      usuario.telefono = dto.telefono.trim() || null;
 
     const guardado = await this.usuariosRepo.save(usuario);
     const { password, ...resultado } = guardado;
     return resultado as Omit<Usuario, 'password'>;
   }
 
-  //  Cambiar contraseña propia con validación actual (HU-03) 
-  async cambiarPassword(id: number, dto: CambiarPasswordDto): Promise<{ mensaje: string }> {
-    const usuario = await this.usuariosRepo.findOne({ where: { id_usuario: id } });
+  //  Cambiar contraseña propia con validación actual (HU-03)
+  async cambiarPassword(
+    id: number,
+    dto: CambiarPasswordDto,
+  ): Promise<{ mensaje: string }> {
+    const usuario = await this.usuariosRepo.findOne({
+      where: { id_usuario: id },
+    });
     if (!usuario) throw new NotFoundException('Usuario no encontrado');
 
     // Validar que la contraseña actual sea correcta con bcrypt
-    const actualCorrecta = await bcrypt.compare(dto.password_actual, usuario.password);
+    const actualCorrecta = await bcrypt.compare(
+      dto.password_actual,
+      usuario.password,
+    );
     if (!actualCorrecta) {
       throw new BadRequestException('La contraseña actual no es correcta');
     }
 
     // No permitir reutilizar la misma contraseña
-    const mismaPassword = await bcrypt.compare(dto.password_nueva, usuario.password);
+    const mismaPassword = await bcrypt.compare(
+      dto.password_nueva,
+      usuario.password,
+    );
     if (mismaPassword) {
-      throw new BadRequestException('La contraseña nueva no puede ser igual a la actual');
+      throw new BadRequestException(
+        'La contraseña nueva no puede ser igual a la actual',
+      );
     }
 
     // Hashear y guardar la nueva contraseña

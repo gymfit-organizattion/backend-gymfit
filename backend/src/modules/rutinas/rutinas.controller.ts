@@ -1,9 +1,22 @@
 import {
-  Controller, Get, Post, Body, Param, Put, Delete, Patch,
-  ParseIntPipe, HttpCode, HttpStatus,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  Patch,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
-  ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { RutinasService } from './rutinas.service';
 import { CreateRutinaDto, UpdateRutinaDto } from './dto/rutina.dto';
@@ -21,30 +34,38 @@ export class RutinasController {
 
   @Post()
   @Roles('admin', 'entrenador')
-  @ApiOperation({ summary: 'Crear rutina (HU-09)', description: 'Crea una nueva rutina de ejercicios.' })
+  @ApiOperation({
+    summary: 'Crear rutina (HU-09)',
+    description: 'Crea una nueva rutina de ejercicios.',
+  })
   @ApiResponse({ status: 201, description: 'Rutina creada' })
-  create(@Body() dto: CreateRutinaDto) { return this.rutinasService.create(dto); }
+  create(@Body() dto: CreateRutinaDto) {
+    return this.rutinasService.create(dto);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Listar todas las rutinas' })
   @ApiResponse({ status: 200, description: 'Lista de rutinas' })
-  findAll() { return this.rutinasService.findAll(); }
+  findAll() {
+    return this.rutinasService.findAll();
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener rutina por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Datos de la rutina' })
-  findOne(@Param('id', ParseIntPipe) id: number) { return this.rutinasService.findOne(id); }
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.rutinasService.findOne(id);
+  }
 
   @Put(':id')
   @Roles('admin', 'entrenador')
   @ApiOperation({ summary: 'Actualizar rutina' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Rutina actualizada' })
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateRutinaDto,
-  ) { return this.rutinasService.update(id, dto); }
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateRutinaDto) {
+    return this.rutinasService.update(id, dto);
+  }
 
   @Delete(':id')
   @Roles('admin')
@@ -52,7 +73,9 @@ export class RutinasController {
   @ApiOperation({ summary: 'Eliminar rutina (admin)' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Rutina eliminada' })
-  remove(@Param('id', ParseIntPipe) id: number) { return this.rutinasService.remove(id); }
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.rutinasService.remove(id);
+  }
 
   // ── GESTIÓN DE EJERCICIOS DENTRO DE UNA RUTINA ───────────────────────────
 
@@ -60,12 +83,16 @@ export class RutinasController {
   @Roles('admin', 'entrenador')
   @ApiOperation({
     summary: 'Agregar ejercicio del catálogo a una rutina existente',
-    description: 'Agrega un ejercicio del catálogo a la rutina indicada con sus parámetros de carga.',
+    description:
+      'Agrega un ejercicio del catálogo a la rutina indicada con sus parámetros de carga.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'ID de la rutina' })
   @ApiResponse({ status: 201, description: 'Ejercicio agregado a la rutina' })
   @ApiResponse({ status: 404, description: 'Rutina o ejercicio no encontrado' })
-  @ApiResponse({ status: 409, description: 'El ejercicio ya está en la rutina' })
+  @ApiResponse({
+    status: 409,
+    description: 'El ejercicio ya está en la rutina',
+  })
   agregarEjercicio(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: RutinaEjercicioItemDto,
@@ -77,10 +104,15 @@ export class RutinasController {
   @Roles('admin', 'entrenador')
   @ApiOperation({
     summary: 'Actualizar parámetros de un ejercicio en la rutina',
-    description: 'Modifica series, repeticiones, descanso u observaciones de un ejercicio dentro de la rutina.',
+    description:
+      'Modifica series, repeticiones, descanso u observaciones de un ejercicio dentro de la rutina.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'ID de la rutina' })
-  @ApiParam({ name: 'reId', type: Number, description: 'ID del registro rutina_ejercicio' })
+  @ApiParam({
+    name: 'reId',
+    type: Number,
+    description: 'ID del registro rutina_ejercicio',
+  })
   @ApiResponse({ status: 200, description: 'Parámetros actualizados' })
   actualizarEjercicio(
     @Param('id', ParseIntPipe) id: number,
@@ -98,7 +130,11 @@ export class RutinasController {
     description: 'Elimina el registro rutina_ejercicio indicado.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'ID de la rutina' })
-  @ApiParam({ name: 'reId', type: Number, description: 'ID del registro rutina_ejercicio' })
+  @ApiParam({
+    name: 'reId',
+    type: Number,
+    description: 'ID del registro rutina_ejercicio',
+  })
   @ApiResponse({ status: 204, description: 'Ejercicio eliminado de la rutina' })
   quitarEjercicio(
     @Param('id', ParseIntPipe) id: number,
@@ -111,10 +147,15 @@ export class RutinasController {
 
   @Post('asignaciones')
   @Roles('admin', 'entrenador')
-  @ApiOperation({ summary: 'Asignar rutina a socio (HU-10)', description: 'Vincula una rutina existente a un socio específico.' })
+  @ApiOperation({
+    summary: 'Asignar rutina a socio (HU-10)',
+    description: 'Vincula una rutina existente a un socio específico.',
+  })
   @ApiResponse({ status: 201, description: 'Rutina asignada al socio' })
   @ApiResponse({ status: 404, description: 'Rutina o socio no encontrado' })
-  asignarRutina(@Body() dto: CreateAsignacionRutinaDto) { return this.rutinasService.asignarRutina(dto); }
+  asignarRutina(@Body() dto: CreateAsignacionRutinaDto) {
+    return this.rutinasService.asignarRutina(dto);
+  }
 
   @Get('asignaciones/socio/:idSocio')
   @Roles('admin', 'entrenador', 'recepcionista', 'socio')
@@ -131,5 +172,7 @@ export class RutinasController {
   @ApiOperation({ summary: 'Eliminar asignación de rutina' })
   @ApiParam({ name: 'id', type: Number, description: 'ID de la asignación' })
   @ApiResponse({ status: 204, description: 'Asignación eliminada' })
-  removeAsignacion(@Param('id', ParseIntPipe) id: number) { return this.rutinasService.removeAsignacion(id); }
+  removeAsignacion(@Param('id', ParseIntPipe) id: number) {
+    return this.rutinasService.removeAsignacion(id);
+  }
 }

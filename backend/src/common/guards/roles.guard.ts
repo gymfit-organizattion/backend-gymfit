@@ -22,10 +22,10 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
     const rolUsuario: string = (user?.rol?.nombre ?? '').toLowerCase();
-    const rolesRequeridosLower = rolesRequeridos.map(r => r.toLowerCase());
+    const rolesRequeridosLower = rolesRequeridos.map((r) => r.toLowerCase());
 
     console.log(`[RolesGuard] Endpoint: ${context.getHandler().name}`);
-    console.log(`[RolesGuard] Requeridos: ${rolesRequeridosLower}`);
+    console.log(`[RolesGuard] Requeridos: ${rolesRequeridosLower.join(', ')}`);
     console.log(`[RolesGuard] Usuario Rol: ${rolUsuario}`);
     console.log(`[RolesGuard] User ID: ${user?.id_usuario}`);
 

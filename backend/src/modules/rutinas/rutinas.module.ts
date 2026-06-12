@@ -9,7 +9,15 @@ import { Ejercicio } from '../ejercicios/entities/ejercicio.entity';
 import { Socio } from '../socios/entities/socio.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Rutina, RutinaEjercicio, AsignacionRutina, Ejercicio, Socio])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Rutina,
+      RutinaEjercicio,
+      AsignacionRutina,
+      Ejercicio,
+      Socio,
+    ]),
+  ],
   controllers: [RutinasController],
   providers: [RutinasService],
   exports: [TypeOrmModule, RutinasService],

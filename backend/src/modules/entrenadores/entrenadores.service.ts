@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Entrenador } from './entities/entrenador.entity';
@@ -22,14 +26,24 @@ export class EntrenadoresService {
     private readonly socioRepo: Repository<Socio>,
   ) {}
 
-  //  ENTRENADORES 
+  //  ENTRENADORES
 
   async create(dto: CreateEntrenadorDto): Promise<Entrenador> {
-    const usuario = await this.usuarioRepo.findOne({ where: { id_usuario: dto.id_usuario } });
-    if (!usuario) throw new NotFoundException(`Usuario con id ${dto.id_usuario} no encontrado`);
+    const usuario = await this.usuarioRepo.findOne({
+      where: { id_usuario: dto.id_usuario },
+    });
+    if (!usuario)
+      throw new NotFoundException(
+        `Usuario con id ${dto.id_usuario} no encontrado`,
+      );
 
-    const yaExiste = await this.entrenadorRepo.findOne({ where: { usuario: { id_usuario: dto.id_usuario } } });
-    if (yaExiste) throw new ConflictException('Este usuario ya está registrado como entrenador');
+    const yaExiste = await this.entrenadorRepo.findOne({
+      where: { usuario: { id_usuario: dto.id_usuario } },
+    });
+    if (yaExiste)
+      throw new ConflictException(
+        'Este usuario ya está registrado como entrenador',
+      );
 
     const entrenador = this.entrenadorRepo.create({
       usuario,
@@ -49,34 +63,55 @@ export class EntrenadoresService {
   async findOne(id: number): Promise<Entrenador> {
     const e = await this.entrenadorRepo.findOne({
       where: { id_entrenador: id },
-      relations: ['usuario', 'usuario.rol', 'clases', 'asignaciones', 'asignaciones.socio'],
+      relations: [
+        'usuario',
+        'usuario.rol',
+        'clases',
+        'asignaciones',
+        'asignaciones.socio',
+      ],
     });
-    if (!e) throw new NotFoundException(`Entrenador con id ${id} no encontrado`);
+    if (!e)
+      throw new NotFoundException(`Entrenador con id ${id} no encontrado`);
     return e;
   }
 
   async update(id: number, dto: UpdateEntrenadorDto): Promise<Entrenador> {
-    const e = await this.entrenadorRepo.findOne({ where: { id_entrenador: id } });
-    if (!e) throw new NotFoundException(`Entrenador con id ${id} no encontrado`);
+    const e = await this.entrenadorRepo.findOne({
+      where: { id_entrenador: id },
+    });
+    if (!e)
+      throw new NotFoundException(`Entrenador con id ${id} no encontrado`);
     if (dto.especialidad !== undefined) e.especialidad = dto.especialidad;
     if (dto.experiencia !== undefined) e.experiencia = dto.experiencia;
     return this.entrenadorRepo.save(e);
   }
 
   async remove(id: number): Promise<void> {
-    const e = await this.entrenadorRepo.findOne({ where: { id_entrenador: id } });
-    if (!e) throw new NotFoundException(`Entrenador con id ${id} no encontrado`);
+    const e = await this.entrenadorRepo.findOne({
+      where: { id_entrenador: id },
+    });
+    if (!e)
+      throw new NotFoundException(`Entrenador con id ${id} no encontrado`);
     await this.entrenadorRepo.remove(e);
   }
 
-  //  ASIGNACIONES 
+  //  ASIGNACIONES
 
   async asignar(dto: CreateAsignacionDto): Promise<Asignacion> {
-    const entrenador = await this.entrenadorRepo.findOne({ where: { id_entrenador: dto.id_entrenador } });
-    if (!entrenador) throw new NotFoundException(`Entrenador con id ${dto.id_entrenador} no encontrado`);
+    const entrenador = await this.entrenadorRepo.findOne({
+      where: { id_entrenador: dto.id_entrenador },
+    });
+    if (!entrenador)
+      throw new NotFoundException(
+        `Entrenador con id ${dto.id_entrenador} no encontrado`,
+      );
 
-    const socio = await this.socioRepo.findOne({ where: { id_socio: dto.id_socio } });
-    if (!socio) throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
+    const socio = await this.socioRepo.findOne({
+      where: { id_socio: dto.id_socio },
+    });
+    if (!socio)
+      throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
 
     const asignacion = this.asignacionRepo.create({
       entrenador,
@@ -87,13 +122,20 @@ export class EntrenadoresService {
   }
 
   async asignarMasivo(dto: BulkAsignacionDto): Promise<Asignacion[]> {
-    const entrenador = await this.entrenadorRepo.findOne({ where: { id_entrenador: dto.id_entrenador } });
-    if (!entrenador) throw new NotFoundException(`Entrenador con id ${dto.id_entrenador} no encontrado`);
+    const entrenador = await this.entrenadorRepo.findOne({
+      where: { id_entrenador: dto.id_entrenador },
+    });
+    if (!entrenador)
+      throw new NotFoundException(
+        `Entrenador con id ${dto.id_entrenador} no encontrado`,
+      );
 
     const asignaciones: Asignacion[] = [];
 
     for (const idSocio of dto.id_socios) {
-      const socio = await this.socioRepo.findOne({ where: { id_socio: idSocio } });
+      const socio = await this.socioRepo.findOne({
+        where: { id_socio: idSocio },
+      });
       if (!socio) continue; // O lanzar error según preferencia
 
       const asignacion = this.asignacionRepo.create({
@@ -122,8 +164,11 @@ export class EntrenadoresService {
   }
 
   async removeAsignacion(id: number): Promise<void> {
-    const a = await this.asignacionRepo.findOne({ where: { id_asignacion: id } });
-    if (!a) throw new NotFoundException(`Asignación con id ${id} no encontrada`);
+    const a = await this.asignacionRepo.findOne({
+      where: { id_asignacion: id },
+    });
+    if (!a)
+      throw new NotFoundException(`Asignación con id ${id} no encontrada`);
     await this.asignacionRepo.remove(a);
   }
 }

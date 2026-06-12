@@ -2,7 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notificacion } from './entities/notificacion.entity';
-import { CreateNotificacionDto, UpdateNotificacionDto, MarcarLeidaDto } from './dto/notificacion.dto';
+import {
+  CreateNotificacionDto,
+  UpdateNotificacionDto,
+  MarcarLeidaDto,
+} from './dto/notificacion.dto';
 import { Membresia } from '../membresias/entities/membresia.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -16,7 +20,7 @@ export class NotificacionesService {
     private readonly membresiaRepo: Repository<Membresia>,
     @InjectRepository(Equipo)
     private readonly equipoRepo: Repository<Equipo>,
-  ) { }
+  ) {}
 
   // CRUD básico
 
@@ -36,7 +40,9 @@ export class NotificacionesService {
   async findAll(id_usuario?: number): Promise<Notificacion[]> {
     const query = this.notificacionRepo.createQueryBuilder('n');
     if (id_usuario) {
-      query.where('n.id_usuario = :id_usuario OR n.id_usuario IS NULL', { id_usuario });
+      query.where('n.id_usuario = :id_usuario OR n.id_usuario IS NULL', {
+        id_usuario,
+      });
     }
     return query.orderBy('n.fecha_creacion', 'DESC').getMany();
   }
@@ -45,7 +51,8 @@ export class NotificacionesService {
     const notif = await this.notificacionRepo.findOne({
       where: { id_notificacion: id },
     });
-    if (!notif) throw new NotFoundException(`Notificación con id ${id} no encontrada`);
+    if (!notif)
+      throw new NotFoundException(`Notificación con id ${id} no encontrada`);
     return notif;
   }
 
@@ -62,8 +69,12 @@ export class NotificacionesService {
 
   // Marcar como leída(s)
 
-  async marcarLeidas(id_usuario: number, dto: MarcarLeidaDto): Promise<{ actualizadas: number }> {
-    const query = this.notificacionRepo.createQueryBuilder()
+  async marcarLeidas(
+    id_usuario: number,
+    dto: MarcarLeidaDto,
+  ): Promise<{ actualizadas: number }> {
+    const query = this.notificacionRepo
+      .createQueryBuilder()
       .update(Notificacion)
       .set({ leida: true });
 
@@ -94,22 +105,30 @@ export class NotificacionesService {
    */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async revisarVencimientosDiarios() {
-    console.log('[CRON] Iniciando revisión automática de membresías próximas a vencer...');
+    console.log(
+      '[CRON] Iniciando revisión automática de membresías próximas a vencer...',
+    );
     const creadas = await this.generarNotificacionesMembresias(5);
 
     // Simulación del envío automático de correos (Criterio de Aceptación HU-22)
     for (const notif of creadas) {
-      console.log(`[EMAIL ENVIADO] A: Socio ID ${notif.id_usuario} | Asunto: ${notif.titulo} | Mensaje: ${notif.mensaje}`);
+      console.log(
+        `[EMAIL ENVIADO] A: Socio ID ${notif.id_usuario} | Asunto: ${notif.titulo} | Mensaje: ${notif.mensaje}`,
+      );
     }
 
-    console.log(`[CRON] Revisión finalizada. Se enviaron ${creadas.length} avisos de vencimiento.`);
+    console.log(
+      `[CRON] Revisión finalizada. Se enviaron ${creadas.length} avisos de vencimiento.`,
+    );
   }
 
   /**
    * Genera notificaciones para membresías que vencen en los próximos N días.
    * Por defecto: 5 días.
    */
-  async generarNotificacionesMembresias(diasAviso = 5): Promise<Notificacion[]> {
+  async generarNotificacionesMembresias(
+    diasAviso = 5,
+  ): Promise<Notificacion[]> {
     const hoy = new Date();
     const limite = new Date();
     limite.setDate(hoy.getDate() + diasAviso);
@@ -124,7 +143,10 @@ export class NotificacionesService {
       .leftJoinAndSelect('socio.usuario', 'usuario')
       .leftJoinAndSelect('m.plan', 'plan')
       .where('m.estado = :estado', { estado: 'activa' })
-      .andWhere('m.fecha_fin BETWEEN :hoy AND :limite', { hoy: hoyStr, limite: limiteStr })
+      .andWhere('m.fecha_fin BETWEEN :hoy AND :limite', {
+        hoy: hoyStr,
+        limite: limiteStr,
+      })
       .getMany();
 
     const creadas: Notificacion[] = [];
@@ -221,7 +243,9 @@ export class NotificacionesService {
     por_tipo: Record<string, number>;
   }> {
     const total = await this.notificacionRepo.count();
-    const no_leidas = await this.notificacionRepo.count({ where: { leida: false } });
+    const no_leidas = await this.notificacionRepo.count({
+      where: { leida: false },
+    });
 
     const porTipo = await this.notificacionRepo
       .createQueryBuilder('n')
@@ -234,7 +258,10 @@ export class NotificacionesService {
       total,
       no_leidas,
       por_tipo: porTipo.reduce(
-        (acc, item) => ({ ...acc, [item.tipo]: Number.parseInt(item.cantidad, 10) }),
+        (acc, item) => ({
+          ...acc,
+          [item.tipo]: Number.parseInt(item.cantidad, 10),
+        }),
         {},
       ),
     };

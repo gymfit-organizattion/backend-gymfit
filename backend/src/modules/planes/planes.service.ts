@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Plan } from './entities/plan.entity';
@@ -12,8 +16,11 @@ export class PlanesService {
   ) {}
 
   async create(dto: CreatePlanDto): Promise<Plan> {
-    const existe = await this.planRepo.findOne({ where: { nombre: dto.nombre } });
-    if (existe) throw new ConflictException(`El plan "${dto.nombre}" ya existe`);
+    const existe = await this.planRepo.findOne({
+      where: { nombre: dto.nombre },
+    });
+    if (existe)
+      throw new ConflictException(`El plan "${dto.nombre}" ya existe`);
     const plan = this.planRepo.create(dto);
     return this.planRepo.save(plan);
   }

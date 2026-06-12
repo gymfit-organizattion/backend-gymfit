@@ -1,6 +1,10 @@
 import {
-  IsDateString, IsInt, IsNotEmpty, IsOptional,
-  IsPositive, IsString,
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
@@ -24,4 +28,6 @@ export class CreateMantenimientoDto {
   descripcion?: string;
 }
 
-export class UpdateMantenimientoDto extends PartialType(CreateMantenimientoDto) {}
+export class UpdateMantenimientoDto extends PartialType(
+  CreateMantenimientoDto,
+) {}

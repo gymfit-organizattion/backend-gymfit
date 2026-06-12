@@ -17,11 +17,13 @@ import { Rol } from '../roles/entities/rol.entity';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const secret = config.get<string>('JWT_SECRET');
-        if (!secret) throw new Error('JWT_SECRET no está configurado en el .env');
+        if (!secret)
+          throw new Error('JWT_SECRET no está configurado en el .env');
 
         // CORRECCIÓN: sin parseInt — '8h' como string directo.
         // parseInt('8h') devolvía 8 (segundos), no 8 horas.
-        const expiresIn = (config.get<string>('JWT_EXPIRES_IN') ?? '8h') as `${number}${'s'|'m'|'h'|'d'}`;
+        const expiresIn = (config.get<string>('JWT_EXPIRES_IN') ??
+          '8h') as `${number}${'s' | 'm' | 'h' | 'd'}`;
 
         return {
           secret,

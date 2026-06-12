@@ -18,7 +18,7 @@ export class RolesService {
     private readonly rolRepo: Repository<Rol>,
   ) {}
 
-  //  Seed inicial — solo inserta si la tabla está vacía 
+  //  Seed inicial — solo inserta si la tabla está vacía
   async seed(): Promise<{ mensaje: string; roles: Rol[] }> {
     const existentes = await this.rolRepo.find();
     if (existentes.length > 0) {
@@ -38,9 +38,11 @@ export class RolesService {
     };
   }
 
-  //  CRUD protegido — solo admin 
+  //  CRUD protegido — solo admin
   async create(dto: CreateRolDto): Promise<Rol> {
-    const existe = await this.rolRepo.findOne({ where: { nombre: dto.nombre } });
+    const existe = await this.rolRepo.findOne({
+      where: { nombre: dto.nombre },
+    });
     if (existe) throw new ConflictException(`El rol "${dto.nombre}" ya existe`);
     const rol = this.rolRepo.create(dto);
     return this.rolRepo.save(rol);

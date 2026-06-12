@@ -7,15 +7,15 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { Usuario }          from '../../usuarios/entities/usuario.entity';
-import { Prospecto }        from '../../prospectos/entities/prospecto.entity';
-import { Membresia }        from '../../membresias/entities/membresia.entity';
-import { Inscripcion }      from '../../inscripciones/entities/inscripcion.entity';
-import { Evaluacion }       from '../../evaluaciones/entities/evaluacion.entity';
-import { Progreso }         from '../../progreso/entities/progreso.entity';
-import { Asistencia }       from '../../asistencias/entities/asistencia.entity';
+import { Usuario } from '../../usuarios/entities/usuario.entity';
+import { Prospecto } from '../../prospectos/entities/prospecto.entity';
+import { Membresia } from '../../membresias/entities/membresia.entity';
+import { Inscripcion } from '../../inscripciones/entities/inscripcion.entity';
+import { Evaluacion } from '../../evaluaciones/entities/evaluacion.entity';
+import { Progreso } from '../../progreso/entities/progreso.entity';
+import { Asistencia } from '../../asistencias/entities/asistencia.entity';
 import { AsignacionRutina } from '../../rutinas/entities/asignacion-rutina.entity';
-import { Asignacion }       from '../../entrenadores/entities/asignacion.entity';
+import { Asignacion } from '../../entrenadores/entities/asignacion.entity';
 
 @Entity('socio')
 export class Socio {

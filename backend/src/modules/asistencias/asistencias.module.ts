@@ -8,14 +8,7 @@ import { Membresia } from '../membresias/entities/membresia.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Asistencia,
-      Socio,
-      Membresia,
-      Usuario,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Asistencia, Socio, Membresia, Usuario])],
   controllers: [AsistenciasController],
   providers: [AsistenciasService],
   exports: [TypeOrmModule, AsistenciasService],

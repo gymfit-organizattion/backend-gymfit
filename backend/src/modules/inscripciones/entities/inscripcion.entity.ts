@@ -20,12 +20,14 @@ export class Inscripcion {
   })
   fecha_inscripcion!: Date;
 
-  
   @ManyToOne(() => Socio, (s) => s.inscripciones, { nullable: false })
   @JoinColumn({ name: 'id_socio' })
   socio!: Socio;
 
-  @ManyToOne(() => Clase, (c) => c.inscripciones, { nullable: false, eager: true })
+  @ManyToOne(() => Clase, (c) => c.inscripciones, {
+    nullable: false,
+    eager: true,
+  })
   @JoinColumn({ name: 'id_clase' })
   clase!: Clase;
 }

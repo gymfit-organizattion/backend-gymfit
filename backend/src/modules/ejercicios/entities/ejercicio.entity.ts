@@ -1,15 +1,5 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-} from 'typeorm';
-import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  MaxLength,
-} from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { IsNotEmpty, IsString, IsOptional, MaxLength } from 'class-validator';
 import { RutinaEjercicio } from '../../rutinas/entities/rutina-ejercicio.entity';
 
 @Entity('ejercicio')
@@ -28,13 +18,17 @@ export class Ejercicio {
   @IsString()
   descripcion!: string | null;
 
-  @Column({ name: 'grupo_muscular', type: 'varchar', length: 50, nullable: true })
+  @Column({
+    name: 'grupo_muscular',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   @MaxLength(50)
   grupo_muscular!: string | null;
 
-  
   @OneToMany(() => RutinaEjercicio, (re) => re.ejercicio)
   rutina_ejercicios!: RutinaEjercicio[];
 }

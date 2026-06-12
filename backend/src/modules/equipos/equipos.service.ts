@@ -62,26 +62,40 @@ export class EquiposService {
       .getMany();
   }
 
-  async obtenerInventarioTotal(): Promise<{ equipo_id: number; nombre: string; cantidad: number; valor_total: number }[]> {
+  async obtenerInventarioTotal(): Promise<
+    {
+      equipo_id: number;
+      nombre: string;
+      cantidad: number;
+      valor_total: number;
+    }[]
+  > {
     return this.equipoRepo
       .createQueryBuilder('equipo')
       .select('equipo.id_equipo', 'equipo_id')
       .addSelect('equipo.nombre', 'nombre')
       .addSelect('equipo.cantidad', 'cantidad')
-      .addSelect('CAST(equipo.cantidad * equipo.precio_unitario AS FLOAT)', 'valor_total')
+      .addSelect(
+        'CAST(equipo.cantidad * equipo.precio_unitario AS FLOAT)',
+        'valor_total',
+      )
       .where('equipo.precio_unitario IS NOT NULL')
       .getRawMany();
   }
 
-  async actualizarStock(id: number, cantidad: number, operacion: 'aumentar' | 'disminuir'): Promise<Equipo> {
+  async actualizarStock(
+    id: number,
+    cantidad: number,
+    operacion: 'aumentar' | 'disminuir',
+  ): Promise<Equipo> {
     const equipo = await this.findOne(id);
-    
+
     if (operacion === 'aumentar') {
       equipo.cantidad += cantidad;
     } else if (operacion === 'disminuir') {
       equipo.cantidad = Math.max(0, equipo.cantidad - cantidad);
     }
-    
+
     return this.equipoRepo.save(equipo);
   }
 

@@ -1,6 +1,11 @@
 import {
-  IsNotEmpty, IsOptional, IsString, IsInt,
-  IsPositive, MaxLength, Min,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsPositive,
+  MaxLength,
+  Min,
 } from 'class-validator';
 
 export class RutinaEjercicioItemDto {

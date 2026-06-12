@@ -18,8 +18,11 @@ export class ProgresoService {
   ) {}
 
   async getComparativa(idSocio: number) {
-    const socio = await this.socioRepo.findOne({ where: { id_socio: idSocio } });
-    if (!socio) throw new NotFoundException(`Socio con id ${idSocio} no encontrado`);
+    const socio = await this.socioRepo.findOne({
+      where: { id_socio: idSocio },
+    });
+    if (!socio)
+      throw new NotFoundException(`Socio con id ${idSocio} no encontrado`);
 
     // Obtener la primera evaluación (inicial)
     const inicial = await this.evaluacionRepo.findOne({
@@ -41,8 +44,11 @@ export class ProgresoService {
   }
 
   async create(dto: CreateProgresoDto): Promise<Progreso> {
-    const socio = await this.socioRepo.findOne({ where: { id_socio: dto.id_socio } });
-    if (!socio) throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
+    const socio = await this.socioRepo.findOne({
+      where: { id_socio: dto.id_socio },
+    });
+    if (!socio)
+      throw new NotFoundException(`Socio con id ${dto.id_socio} no encontrado`);
 
     const progreso = this.progresoRepo.create({
       socio,
@@ -65,7 +71,10 @@ export class ProgresoService {
       where: { id_progreso: id },
       relations: ['socio', 'socio.usuario'],
     });
-    if (!p) throw new NotFoundException(`Registro de progreso con id ${id} no encontrado`);
+    if (!p)
+      throw new NotFoundException(
+        `Registro de progreso con id ${id} no encontrado`,
+      );
     return p;
   }
 
@@ -79,7 +88,8 @@ export class ProgresoService {
   async update(id: number, dto: UpdateProgresoDto): Promise<Progreso> {
     const p = await this.findOne(id);
     if (dto.peso !== undefined) p.peso = dto.peso ?? null;
-    if (dto.observaciones !== undefined) p.observaciones = dto.observaciones ?? null;
+    if (dto.observaciones !== undefined)
+      p.observaciones = dto.observaciones ?? null;
     if (dto.fecha !== undefined) p.fecha = dto.fecha;
     return this.progresoRepo.save(p);
   }

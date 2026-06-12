@@ -1,9 +1,21 @@
 import {
-  Controller, Get, Post, Body, Param,
-  Put, Delete, ParseIntPipe, HttpCode, HttpStatus,
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
-  ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { CreateRolDto, UpdateRolDto } from './dto/rol.dto';
@@ -20,9 +32,13 @@ export class RolesController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Inicializar roles del sistema',
-    description: 'Inserta los 4 roles base (admin, entrenador, recepcionista, socio) solo si la tabla está vacía. Endpoint público — útil en primer despliegue.',
+    description:
+      'Inserta los 4 roles base (admin, entrenador, recepcionista, socio) solo si la tabla está vacía. Endpoint público — útil en primer despliegue.',
   })
-  @ApiResponse({ status: 200, description: 'Roles inicializados o ya existentes' })
+  @ApiResponse({
+    status: 200,
+    description: 'Roles inicializados o ya existentes',
+  })
   seed() {
     return this.rolesService.seed();
   }
@@ -31,7 +47,8 @@ export class RolesController {
   @Get()
   @ApiOperation({
     summary: 'Listar todos los roles',
-    description: 'Retorna todos los roles disponibles. Endpoint público — usado por el formulario de registro para cargar el selector de roles.',
+    description:
+      'Retorna todos los roles disponibles. Endpoint público — usado por el formulario de registro para cargar el selector de roles.',
   })
   @ApiResponse({ status: 200, description: 'Lista de roles' })
   findAll() {

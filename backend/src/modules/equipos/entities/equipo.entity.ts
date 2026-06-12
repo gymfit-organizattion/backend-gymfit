@@ -1,10 +1,10 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { AlertaStock } from '../../alertas-stock/entities/alerta-stock.entity';
 import { Mantenimiento } from '../../mantenimiento/entities/mantenimiento.entity';
@@ -17,13 +17,24 @@ export class Equipo {
   @Column({ name: 'nombre', type: 'varchar', length: 100 })
   nombre!: string;
 
-  @Column({ name: 'codigo_barras', type: 'varchar', length: 100, nullable: true, unique: true })
+  @Column({
+    name: 'codigo_barras',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+    unique: true,
+  })
   codigo_barras!: string | null;
 
   @Column({ name: 'tipo', type: 'varchar', length: 50, nullable: true })
   tipo!: string | null;
 
-  @Column({ name: 'estado', type: 'varchar', length: 50, default: 'disponible' })
+  @Column({
+    name: 'estado',
+    type: 'varchar',
+    length: 50,
+    default: 'disponible',
+  })
   estado!: string;
 
   @Column({ name: 'ubicacion', type: 'varchar', length: 100, nullable: true })
@@ -38,7 +49,13 @@ export class Equipo {
   @Column({ name: 'stock_maximo', type: 'int', nullable: true })
   stock_maximo!: number | null;
 
-  @Column({ name: 'precio_unitario', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({
+    name: 'precio_unitario',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   precio_unitario!: number | null;
 
   @CreateDateColumn({ name: 'fecha_registro' })

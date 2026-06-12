@@ -20,12 +20,10 @@ export class AsistenciasService {
     private readonly usuarioRepo: Repository<Usuario>,
   ) {}
 
-  
   // RF-016 — VALIDAR ACCESO AL GIMNASIO
   // Criterio HU-16: respuesta visual Verde/Rojo + registro automático
- 
-  async validarAcceso(identificacion: string): Promise<RespuestaAcceso> {
 
+  async validarAcceso(identificacion: string): Promise<RespuestaAcceso> {
     // 1. Buscar el usuario por su número de identificación
     const usuario = await this.usuarioRepo.findOne({
       where: { identificacion },
@@ -45,7 +43,8 @@ export class AsistenciasService {
       return {
         acceso: false,
         color: 'rojo',
-        motivo: 'El usuario está inactivo en el sistema. Consulte con administración.',
+        motivo:
+          'El usuario está inactivo en el sistema. Consulte con administración.',
         socio: undefined,
       };
     }
@@ -95,14 +94,10 @@ export class AsistenciasService {
     // - fecha_fin >= hoy
     const membresiaValida = membresias.find((m) => {
       const inicio = new Date(m.fecha_inicio);
-      const fin    = new Date(m.fecha_fin);
+      const fin = new Date(m.fecha_fin);
       inicio.setHours(0, 0, 0, 0);
       fin.setHours(23, 59, 59, 999);
-      return (
-        m.estado.toLowerCase() === 'activa' &&
-        inicio <= hoy &&
-        fin >= hoy
-      );
+      return m.estado.toLowerCase() === 'activa' && inicio <= hoy && fin >= hoy;
     });
 
     // 7. Sin membresía activa hoy — acceso denegado
@@ -165,9 +160,8 @@ export class AsistenciasService {
     };
   }
 
-  
   // RF-017 — REGISTRAR ASISTENCIA MANUAL (por id_socio directo)
- 
+
   async registrar(dto: CreateAsistenciaDto): Promise<Asistencia> {
     const socio = await this.socioRepo.findOne({
       where: { id_socio: dto.id_socio },
@@ -179,9 +173,7 @@ export class AsistenciasService {
     return this.asistenciaRepo.save(asistencia);
   }
 
- 
   // CONSULTAS
-  
 
   findAll(): Promise<Asistencia[]> {
     return this.asistenciaRepo.find({
@@ -195,7 +187,8 @@ export class AsistenciasService {
       where: { id_asistencia: id },
       relations: ['socio', 'socio.usuario'],
     });
-    if (!a) throw new NotFoundException(`Asistencia con id ${id} no encontrada`);
+    if (!a)
+      throw new NotFoundException(`Asistencia con id ${id} no encontrada`);
     return a;
   }
 

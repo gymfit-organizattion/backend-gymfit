@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
-
 export class CreateEjercicioDto {
   @IsNotEmpty({ message: 'El nombre del ejercicio es obligatorio' })
   @IsString()

@@ -22,7 +22,10 @@ export class Mantenimiento {
 
   @Column({ name: 'fecha', type: 'date' })
   @IsNotEmpty({ message: 'La fecha del mantenimiento es obligatoria' })
-  @IsDateString({}, { message: 'La fecha debe tener formato válido (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    { message: 'La fecha debe tener formato válido (YYYY-MM-DD)' },
+  )
   fecha!: string;
 
   @Column({ name: 'descripcion', type: 'text', nullable: true })
@@ -30,8 +33,10 @@ export class Mantenimiento {
   @IsString()
   descripcion!: string | null;
 
-
-  @ManyToOne(() => Equipo, (e) => e.mantenimientos, { nullable: false, eager: true })
+  @ManyToOne(() => Equipo, (e) => e.mantenimientos, {
+    nullable: false,
+    eager: true,
+  })
   @JoinColumn({ name: 'id_equipo' })
   equipo!: Equipo;
 

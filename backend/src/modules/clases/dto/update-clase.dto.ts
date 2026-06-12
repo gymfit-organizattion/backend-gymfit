@@ -1,5 +1,10 @@
 import {
-  IsOptional, IsString, IsInt, IsPositive, MaxLength, IsDate,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsPositive,
+  MaxLength,
+  IsDate,
 } from 'class-validator';
 
 export class UpdateClaseDto {

@@ -1,9 +1,10 @@
 import {
-  IsNotEmpty, IsString, IsInt, IsPositive, MaxLength,
+  IsNotEmpty,
+  IsString,
+  IsInt,
+  IsPositive,
+  MaxLength,
 } from 'class-validator';
-
-
-
 
 export class CreateClaseDto {
   @IsNotEmpty({ message: 'El nombre de la clase es obligatorio' })

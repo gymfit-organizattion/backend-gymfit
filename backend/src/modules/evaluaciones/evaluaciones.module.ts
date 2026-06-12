@@ -8,7 +8,9 @@ import { Entrenador } from '../entrenadores/entities/entrenador.entity';
 import { Asignacion } from '../entrenadores/entities/asignacion.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Evaluacion, Socio, Entrenador, Asignacion])],
+  imports: [
+    TypeOrmModule.forFeature([Evaluacion, Socio, Entrenador, Asignacion]),
+  ],
   controllers: [EvaluacionesController],
   providers: [EvaluacionesService],
   exports: [TypeOrmModule, EvaluacionesService],

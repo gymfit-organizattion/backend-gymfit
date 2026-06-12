@@ -36,7 +36,7 @@ export class Usuario {
   @Column({ name: 'bloqueado_hasta', type: 'timestamp', nullable: true })
   bloqueado_hasta!: Date | null;
 
-  //  Relaciones 
+  //  Relaciones
   @ManyToOne(() => Rol, (rol) => rol.usuarios, { eager: true, nullable: false })
   @JoinColumn({ name: 'id_rol' })
   rol!: Rol;

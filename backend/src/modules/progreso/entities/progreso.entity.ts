@@ -20,7 +20,13 @@ export class Progreso {
   @PrimaryGeneratedColumn({ name: 'id_progreso' })
   id_progreso!: number;
 
-  @Column({ name: 'peso', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({
+    name: 'peso',
+    type: 'numeric',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
   @IsOptional()
   @IsNumber({}, { message: 'El peso debe ser un número' })
   @IsPositive({ message: 'El peso debe ser mayor a 0' })
@@ -33,10 +39,12 @@ export class Progreso {
 
   @Column({ name: 'fecha', type: 'date' })
   @IsNotEmpty({ message: 'La fecha del progreso es obligatoria' })
-  @IsDateString({}, { message: 'La fecha debe tener formato válido (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    { message: 'La fecha debe tener formato válido (YYYY-MM-DD)' },
+  )
   fecha!: string;
 
-  
   @ManyToOne(() => Socio, (s) => s.progresos, { nullable: false })
   @JoinColumn({ name: 'id_socio' })
   socio!: Socio;

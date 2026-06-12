@@ -1,15 +1,5 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-} from 'typeorm';
-import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  MaxLength,
-} from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { IsNotEmpty, IsString, IsOptional, MaxLength } from 'class-validator';
 import { RutinaEjercicio } from './rutina-ejercicio.entity';
 import { AsignacionRutina } from './asignacion-rutina.entity';
 
@@ -41,7 +31,6 @@ export class Rutina {
   @MaxLength(100)
   objetivo!: string | null;
 
-  
   @OneToMany(() => RutinaEjercicio, (re) => re.rutina, { cascade: true })
   rutina_ejercicios!: RutinaEjercicio[];
 

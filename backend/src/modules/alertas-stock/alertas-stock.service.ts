@@ -1,11 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import {
-    CreateAlertaStockDto,
-    ResolverAlertaStockDto,
-    UpdateAlertaStockDto,
+  CreateAlertaStockDto,
+  ResolverAlertaStockDto,
+  UpdateAlertaStockDto,
 } from './dto/alerta-stock.dto';
 import { AlertaStock } from './entities/alerta-stock.entity';
 
@@ -103,7 +107,9 @@ export class AlertasStockService {
     });
   }
 
-  async obtenerAlertasPorTipo(tipo: 'bajo_stock' | 'sobre_stock' | 'agotado'): Promise<AlertaStock[]> {
+  async obtenerAlertasPorTipo(
+    tipo: 'bajo_stock' | 'sobre_stock' | 'agotado',
+  ): Promise<AlertaStock[]> {
     return this.alertaRepo.find({
       where: { tipo, estado: 'activa' },
       relations: ['equipo'],
@@ -188,9 +194,15 @@ export class AlertasStockService {
     por_tipo: Record<string, number>;
   }> {
     const total = await this.alertaRepo.count();
-    const activas = await this.alertaRepo.count({ where: { estado: 'activa' } });
-    const resueltas = await this.alertaRepo.count({ where: { estado: 'resuelta' } });
-    const ignoradas = await this.alertaRepo.count({ where: { estado: 'ignorada' } });
+    const activas = await this.alertaRepo.count({
+      where: { estado: 'activa' },
+    });
+    const resueltas = await this.alertaRepo.count({
+      where: { estado: 'resuelta' },
+    });
+    const ignoradas = await this.alertaRepo.count({
+      where: { estado: 'ignorada' },
+    });
 
     const porTipo = await this.alertaRepo
       .createQueryBuilder('alerta')

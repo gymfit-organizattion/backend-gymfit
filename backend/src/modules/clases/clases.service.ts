@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Clase } from './entities/clase.entity';
@@ -16,8 +20,13 @@ export class ClasesService {
   ) {}
 
   async create(dto: CreateClaseDto): Promise<Clase> {
-    const entrenador = await this.entrenadorRepo.findOne({ where: { id_entrenador: dto.id_entrenador } });
-    if (!entrenador) throw new NotFoundException(`Entrenador con id ${dto.id_entrenador} no encontrado`);
+    const entrenador = await this.entrenadorRepo.findOne({
+      where: { id_entrenador: dto.id_entrenador },
+    });
+    if (!entrenador)
+      throw new NotFoundException(
+        `Entrenador con id ${dto.id_entrenador} no encontrado`,
+      );
     const clase = this.claseRepo.create({ ...dto, entrenador });
     return this.claseRepo.save(clase);
   }
@@ -32,18 +41,32 @@ export class ClasesService {
   async findOne(id: number): Promise<Clase> {
     const c = await this.claseRepo.findOne({
       where: { id_clase: id },
-      relations: ['entrenador', 'entrenador.usuario', 'inscripciones', 'inscripciones.socio', 'inscripciones.socio.usuario'],
+      relations: [
+        'entrenador',
+        'entrenador.usuario',
+        'inscripciones',
+        'inscripciones.socio',
+        'inscripciones.socio.usuario',
+      ],
     });
     if (!c) throw new NotFoundException(`Clase con id ${id} no encontrada`);
     return c;
   }
 
   async update(id: number, dto: UpdateClaseDto): Promise<Clase> {
-    const c = await this.claseRepo.findOne({ where: { id_clase: id }, relations: ['entrenador'] });
+    const c = await this.claseRepo.findOne({
+      where: { id_clase: id },
+      relations: ['entrenador'],
+    });
     if (!c) throw new NotFoundException(`Clase con id ${id} no encontrada`);
     if (dto.id_entrenador) {
-      const entrenador = await this.entrenadorRepo.findOne({ where: { id_entrenador: dto.id_entrenador } });
-      if (!entrenador) throw new NotFoundException(`Entrenador con id ${dto.id_entrenador} no encontrado`);
+      const entrenador = await this.entrenadorRepo.findOne({
+        where: { id_entrenador: dto.id_entrenador },
+      });
+      if (!entrenador)
+        throw new NotFoundException(
+          `Entrenador con id ${dto.id_entrenador} no encontrado`,
+        );
       c.entrenador = entrenador;
     }
     if (dto.nombre !== undefined) c.nombre = dto.nombre;
@@ -58,7 +81,9 @@ export class ClasesService {
     await this.claseRepo.remove(c);
   }
 
-  async getCuposDisponibles(id: number): Promise<{ cupo_total: number; inscritos: number; disponibles: number }> {
+  async getCuposDisponibles(
+    id: number,
+  ): Promise<{ cupo_total: number; inscritos: number; disponibles: number }> {
     const c = await this.claseRepo.findOne({
       where: { id_clase: id },
       relations: ['inscripciones'],

@@ -1,9 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Usuario } from '../../usuarios/entities/usuario.entity';
 
 @Entity('rol')
@@ -14,7 +9,7 @@ export class Rol {
   @Column({ name: 'nombre', type: 'varchar', length: 50, unique: true })
   nombre!: string;
 
-  //  Relaciones 
+  //  Relaciones
   @OneToMany(() => Usuario, (usuario) => usuario.rol)
   usuarios!: Usuario[];
 }

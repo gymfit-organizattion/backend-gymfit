@@ -1,11 +1,18 @@
 import {
-  IsNotEmpty, IsOptional, IsString, IsInt,
-  IsPositive, IsDateString, MaxLength, Min,
-  ValidateNested, IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsPositive,
+  IsDateString,
+  MaxLength,
+  Min,
+  ValidateNested,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-//  Asignar rutina a socio 
+//  Asignar rutina a socio
 export class CreateAsignacionRutinaDto {
   @IsNotEmpty({ message: 'El id de la rutina es obligatorio' })
   @IsInt()

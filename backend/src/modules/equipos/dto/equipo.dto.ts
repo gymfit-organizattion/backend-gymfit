@@ -1,9 +1,11 @@
 import { PartialType } from '@nestjs/mapped-types';
 import {
-    IsNotEmpty,
-    IsNumber,
-    IsOptional, IsString, MaxLength,
-    Min,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
 } from 'class-validator';
 
 export class CreateEquipoDto {

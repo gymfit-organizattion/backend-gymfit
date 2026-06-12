@@ -19,7 +19,6 @@ export class Asistencia {
   })
   fecha!: Date;
 
-  
   @ManyToOne(() => Socio, (s) => s.asistencias, { nullable: false })
   @JoinColumn({ name: 'id_socio' })
   socio!: Socio;

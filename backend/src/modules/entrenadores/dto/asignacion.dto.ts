@@ -1,6 +1,11 @@
-import { IsInt, IsNotEmpty, IsPositive, IsDateString, IsArray } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsPositive,
+  IsDateString,
+  IsArray,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
 
 export class CreateAsignacionDto {
   @ApiProperty({ example: 1 })

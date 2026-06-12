@@ -1,9 +1,23 @@
 import {
-  Controller, Get, Post, Body, Param,
-  Put, Delete, ParseIntPipe, HttpCode, HttpStatus, Request, UseGuards
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
 } from '@nestjs/swagger';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/usuario.dto';
@@ -21,9 +35,16 @@ export class UsuariosController {
 
   @Post()
   @Roles('admin')
-  @ApiOperation({ summary: 'Crear usuario (admin)', description: 'Crea un nuevo usuario del sistema. Solo accesible por administradores.' })
+  @ApiOperation({
+    summary: 'Crear usuario (admin)',
+    description:
+      'Crea un nuevo usuario del sistema. Solo accesible por administradores.',
+  })
   @ApiResponse({ status: 201, description: 'Usuario creado correctamente' })
-  @ApiResponse({ status: 409, description: 'Correo o identificación duplicados' })
+  @ApiResponse({
+    status: 409,
+    description: 'Correo o identificación duplicados',
+  })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Rol insuficiente' })
   create(@Body() dto: CreateUsuarioDto) {
@@ -32,12 +53,18 @@ export class UsuariosController {
 
   @Get()
   @Roles('admin', 'recepcionista', 'entrenador')
-  @ApiOperation({ summary: 'Listar todos los usuarios', description: 'Retorna todos los usuarios del sistema con su rol. Los passwords no se incluyen.' })
+  @ApiOperation({
+    summary: 'Listar todos los usuarios',
+    description:
+      'Retorna todos los usuarios del sistema con su rol. Los passwords no se incluyen.',
+  })
   @ApiResponse({ status: 200, description: 'Lista de usuarios' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Rol insuficiente' })
   findAll(@Request() req: any) {
-    console.log(`[UsuariosController] findAll called by user: ${req.user?.correo}, role: ${req.user?.rol?.nombre}`);
+    console.log(
+      `[UsuariosController] findAll called by user: ${req.user?.correo}, role: ${req.user?.rol?.nombre}`,
+    );
     return this.usuariosService.findAll();
   }
 
@@ -53,8 +80,16 @@ export class UsuariosController {
 
   @Put(':id')
   @Roles('admin')
-  @ApiOperation({ summary: 'Actualizar usuario (admin)', description: 'Actualiza cualquier campo del usuario incluyendo rol y estado. Si se envía password se hashea automáticamente.' })
-  @ApiParam({ name: 'id', type: Number, description: 'ID del usuario a actualizar' })
+  @ApiOperation({
+    summary: 'Actualizar usuario (admin)',
+    description:
+      'Actualiza cualquier campo del usuario incluyendo rol y estado. Si se envía password se hashea automáticamente.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID del usuario a actualizar',
+  })
   @ApiResponse({ status: 200, description: 'Usuario actualizado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUsuarioDto) {
@@ -64,8 +99,16 @@ export class UsuariosController {
   @Delete(':id')
   @Roles('admin')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Desactivar usuario (admin)', description: 'Soft-delete: cambia estado a false. El usuario no puede iniciar sesión pero sus datos se conservan.' })
-  @ApiParam({ name: 'id', type: Number, description: 'ID del usuario a desactivar' })
+  @ApiOperation({
+    summary: 'Desactivar usuario (admin)',
+    description:
+      'Soft-delete: cambia estado a false. El usuario no puede iniciar sesión pero sus datos se conservan.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID del usuario a desactivar',
+  })
   @ApiResponse({ status: 204, description: 'Usuario desactivado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   remove(@Param('id', ParseIntPipe) id: number) {

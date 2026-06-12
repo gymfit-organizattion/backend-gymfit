@@ -26,13 +26,24 @@ export class Evaluacion {
   @IsPositive({ message: 'El peso debe ser mayor a 0' })
   peso!: number;
 
-  @Column({ name: 'grasa', type: 'numeric', precision: 5, scale: 2, nullable: true })
+  @Column({
+    name: 'grasa',
+    type: 'numeric',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+  })
   @IsOptional()
   @IsNumber()
   @IsPositive()
   grasa!: number | null;
 
-  @Column({ name: 'medidas', type: 'text', nullable: true, comment: 'JSON con medidas corporales' })
+  @Column({
+    name: 'medidas',
+    type: 'text',
+    nullable: true,
+    comment: 'JSON con medidas corporales',
+  })
   @IsOptional()
   @IsString()
   medidas!: string | null;
@@ -42,7 +53,6 @@ export class Evaluacion {
   @IsDateString()
   fecha!: string;
 
-  
   @ManyToOne(() => Socio, (s) => s.evaluaciones, { nullable: false })
   @JoinColumn({ name: 'id_socio' })
   socio!: Socio;

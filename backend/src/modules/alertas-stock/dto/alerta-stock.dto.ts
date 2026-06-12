@@ -1,9 +1,10 @@
 import { PartialType } from '@nestjs/mapped-types';
 import {
-    IsEnum,
-    IsNotEmpty,
-    IsNumber,
-    IsOptional, IsString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
 } from 'class-validator';
 
 export class CreateAlertaStockDto {

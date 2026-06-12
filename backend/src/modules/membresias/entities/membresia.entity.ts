@@ -36,7 +36,6 @@ export class Membresia {
   @MaxLength(20)
   estado!: string;
 
-  
   @ManyToOne(() => Socio, (s) => s.membresias, { nullable: false })
   @JoinColumn({ name: 'id_socio' })
   socio!: Socio;
