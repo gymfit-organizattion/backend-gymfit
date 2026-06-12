@@ -19,7 +19,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGIN
-        value: gym-fit-sandy.vercel.app
+        value: https://gym-fit-sandy.vercel.app
       - key: BCRYPT_SALT_ROUNDS
         value: 10
       - key: NODE_VERSION
