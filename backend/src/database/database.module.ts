@@ -24,6 +24,7 @@ import { Equipo } from '../modules/equipos/entities/equipo.entity';
 import { Mantenimiento } from '../modules/mantenimiento/entities/mantenimiento.entity';
 import { AlertaStock } from '../modules/alertas-stock/entities/alerta-stock.entity';
 import { Notificacion } from '../modules/notificaciones/entities/notificacion.entity';
+import { CodigoParticipante } from '../modules/auth/entities/codigo-participante.entity';
 
 const ENTITIES = [
   Rol,
@@ -47,6 +48,7 @@ const ENTITIES = [
   Mantenimiento,
   AlertaStock,
   Notificacion,
+  CodigoParticipante,
 ];
 
 @Module({

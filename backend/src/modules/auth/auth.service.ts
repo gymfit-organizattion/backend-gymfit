@@ -16,7 +16,9 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { CambiarPasswordDto } from './dto/cambiar-password.dto';
 import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto';
+import { RegistroConCodigoDto } from './dto/registro-participante.dto';
 import { JwtPayload } from './estrategies/jwt.strategy';
+import { CodigoParticipante } from './entities/codigo-participante.entity';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +29,8 @@ export class AuthService {
     private readonly usuariosRepo: Repository<Usuario>,
     @InjectRepository(Rol)
     private readonly rolRepo: Repository<Rol>,
+    @InjectRepository(CodigoParticipante)
+    private readonly codigoRepo: Repository<CodigoParticipante>,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
   ) {
@@ -199,5 +203,101 @@ export class AuthService {
     await this.usuariosRepo.save(usuario);
 
     return { mensaje: 'Contraseña actualizada correctamente' };
+  }
+
+  // ─── HU Códigos de Participante ────────────────────────────────
+
+  async generarCodigo(idGenerador: number): Promise<{ codigo: string; mensaje: string }> {
+    const generador = await this.usuariosRepo.findOne({ where: { id_usuario: idGenerador } });
+    if (!generador) throw new NotFoundException('Generador no encontrado');
+
+    const codigoStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+    
+    const nuevoCodigo = this.codigoRepo.create({
+      codigo: codigoStr,
+      generador: generador,
+      usado: false,
+    });
+    
+    await this.codigoRepo.save(nuevoCodigo);
+    return { 
+      codigo: codigoStr,
+      mensaje: 'Código generado exitosamente'
+    };
+  }
+
+  async listarCodigos(): Promise<any[]> {
+    const codigos = await this.codigoRepo.find({
+      relations: ['generador', 'usuario_registrado'],
+      order: { fecha_generacion: 'DESC' },
+    });
+    
+    return codigos.map(c => ({
+      id: c.id_codigo,
+      codigo: c.codigo,
+      usado: c.usado,
+      fecha_creacion: c.fecha_generacion,
+      fecha_uso: c.fecha_uso,
+      creado_por: { nombre: c.generador?.nombre ?? 'Admin' },
+    }));
+  }
+
+  async registrarConCodigo(dto: RegistroConCodigoDto) {
+    const codigoParticipante = await this.codigoRepo.findOne({
+      where: { codigo: dto.codigo }
+    });
+
+    if (!codigoParticipante) throw new BadRequestException('El código no es válido');
+    if (codigoParticipante.usado) throw new BadRequestException('El código ya ha sido usado');
+
+    // Validar usuario
+    const correoExiste = await this.usuariosRepo.findOne({ where: { correo: dto.correo } });
+    if (correoExiste) throw new ConflictException('El correo ya está registrado');
+
+    const idExiste = await this.usuariosRepo.findOne({ where: { identificacion: dto.identificacion } });
+    if (idExiste) throw new ConflictException('La identificación ya está registrada');
+
+    // Asignar rol Participante (asumiendo que es ID 5 u otro, o buscando por nombre 'participante')
+    // Si no existe, podemos asignarle el rol 'Socio' por defecto si Participante no está
+    let rol = await this.rolRepo.findOne({ where: { nombre: 'participante' } });
+    if (!rol) {
+      rol = await this.rolRepo.findOne({ where: { nombre: 'socio' } });
+    }
+    if (!rol) throw new NotFoundException('Rol no configurado en el sistema');
+
+    const hash = await bcrypt.hash(dto.password, this.saltRounds);
+    const usuario = this.usuariosRepo.create({
+      nombre: dto.nombre,
+      identificacion: dto.identificacion,
+      correo: dto.correo,
+      password: hash,
+      telefono: dto.telefono ?? null,
+      rol,
+      estado: true,
+    });
+
+    const guardado = await this.usuariosRepo.save(usuario);
+
+    // Marcar código como usado
+    codigoParticipante.usado = true;
+    codigoParticipante.fecha_uso = new Date();
+    codigoParticipante.usuario_registrado = guardado;
+    await this.codigoRepo.save(codigoParticipante);
+
+    const payload: JwtPayload = {
+      sub: guardado.id_usuario,
+      correo: guardado.correo,
+      rol: rol.nombre,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      usuario: {
+        id_usuario: guardado.id_usuario,
+        nombre: guardado.nombre,
+        correo: guardado.correo,
+        rol: rol.nombre,
+      },
+    };
   }
 }

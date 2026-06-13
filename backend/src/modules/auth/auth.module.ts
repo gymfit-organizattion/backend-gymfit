@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './estrategies/jwt.strategy';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 import { Rol } from '../roles/entities/rol.entity';
+import { CodigoParticipante } from './entities/codigo-participante.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { Rol } from '../roles/entities/rol.entity';
         };
       },
     }),
-    TypeOrmModule.forFeature([Usuario, Rol]),
+    TypeOrmModule.forFeature([Usuario, Rol, CodigoParticipante]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
