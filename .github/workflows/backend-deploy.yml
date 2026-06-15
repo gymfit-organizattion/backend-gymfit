@@ -11,7 +11,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+    #commit de prueba 2 para el deploy
     #contenedor para la db
     services:
       postgres:
