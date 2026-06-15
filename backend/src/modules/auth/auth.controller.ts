@@ -19,6 +19,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { CambiarPasswordDto } from './dto/cambiar-password.dto';
 import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto';
+import { RegistroConCodigoDto } from './dto/registro-participante.dto';
 import { UsuarioActual } from '../../common/decorators/usuario-actual.decorator';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 import { Public } from '../../common/decorators/public.decorator';
@@ -141,5 +142,44 @@ export class AuthController {
     @Body() dto: CambiarPasswordDto,
   ) {
     return this.authService.cambiarPassword(usuario.id_usuario, dto);
+  }
+
+  // ─── HU Códigos de Participante ────────────────────────────────
+
+  @Post('generar-codigo')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Generar código de participante',
+    description: 'Genera un código de un solo uso para registrar un participante. Solo para admin/staff.',
+  })
+  @ApiResponse({ status: 201, description: 'Código generado exitosamente' })
+  generarCodigo(@UsuarioActual() usuario: Usuario) {
+   
+    return this.authService.generarCodigo(usuario.id_usuario);
+  }
+
+  @Get('codigos-participante')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Listar códigos de participante',
+    description: 'Lista todos los códigos generados y su estado. Solo para admin/staff.',
+  })
+  @ApiResponse({ status: 200, description: 'Lista de códigos retornada' })
+  listarCodigos() {
+    return this.authService.listarCodigos();
+  }
+
+  @Public()
+  @Post('registro-participante')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Registro con código de participante',
+    description: 'Registra un nuevo usuario usando un código de un solo uso.',
+  })
+  @ApiBody({ type: RegistroConCodigoDto })
+  @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente con el código' })
+  @ApiResponse({ status: 400, description: 'Código inválido, usado o datos incorrectos' })
+  registrarConCodigo(@Body() dto: RegistroConCodigoDto) {
+    return this.authService.registrarConCodigo(dto);
   }
 }

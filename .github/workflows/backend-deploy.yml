@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'backend/**'
+      - '.github/workflows/**'
 
 jobs:
   build-and-deploy:
@@ -16,9 +17,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: admin
-          POSTGRES_PASSWORD: password123
-          POSTGRES_DB: gymfit_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Admin01@
+          POSTGRES_DB: gymfit
         ports:
           - 5432:5432
         options: >-
